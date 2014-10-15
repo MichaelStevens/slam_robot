@@ -1,0 +1,8 @@
+<launch>
+  <!-- run the joystick drivers -->
+  <param name="joy_node/dev" value="/dev/input/js1" />
+  <node name="joy_node" pkg="joy" type="joy_node" />
+
+  <!-- run the teleop program to write to cmd_vel -->
+  <node name="joy_drive" pkg="slam_robot" type="joy_drive.py" />
+</launch>

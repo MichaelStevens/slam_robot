@@ -1,0 +1,5 @@
+<launch>
+	<include file="$(find slam_robot)/launch/robot.launch" />
+  <include file="$(find slam_robot)/launch/xbox_teleop.launch" />
+  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" />
+</launch>
