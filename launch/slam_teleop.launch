@@ -1,5 +1,11 @@
 <launch>
 	<include file="$(find slam_robot)/launch/robot.launch" />
   <include file="$(find slam_robot)/launch/xbox_teleop.launch" />
-  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" />
+  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+    <param name="maxRange" value="4.0" />
+    <param name="maxUrange" value="3.0" />
+    <param name="minimumScore" value="50" />
+    <!-- <param name="temporalUpdate" value="3" /> -->
+    <param name="particles" value="60" />
+  </node>
 </launch>
