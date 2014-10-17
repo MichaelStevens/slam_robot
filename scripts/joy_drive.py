@@ -16,7 +16,7 @@ def create_msg_handler():
     twist.linear.z = 0
     twist.angular.x = 0
     twist.angular.y = 0
-    twist.angular.z = MAX_ANGULAR_SPEED * data.axes[2]
+    twist.angular.z = MAX_ANGULAR_SPEED * data.axes[3]
 
     cmd_vel_pub.publish(twist)
 
