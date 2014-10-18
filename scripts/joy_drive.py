@@ -4,12 +4,13 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 
-MAX_LINEAR_SPEED = 0.5
-MAX_ANGULAR_SPEED = 1
+
 
 def create_msg_handler():
   cmd_vel_pub = rospy.Publisher('/RosAria/cmd_vel', Twist, queue_size=10)
   def handler(data):
+    MAX_LINEAR_SPEED = 1 if data.buttons[9] else 0.5
+    MAX_ANGULAR_SPEED = 2 if data.buttons[10] else 1
     twist = Twist()
     twist.linear.x = MAX_LINEAR_SPEED * data.axes[1]
     twist.linear.y = 0
