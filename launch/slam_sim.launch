@@ -3,13 +3,23 @@
   <param name="robot_description" command="$(find xacro)/xacro.py $(find slam_robot)/urdf/pioneer3dx.xacro" />
   <include file="$(find slam_robot)/launch/tf_server.launch" />
   <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
-    <param name="maxRange" value="4.0" />
-    <param name="maxUrange" value="3.0" />
-    <param name="minimumScore" value="600" />
-    <param name="srr" value="0.01" />
-    <param name="srt" value="0.02" />
-    <param name="str" value="0.01" />
-    <param name="stt" value="0.02" />
+  <param name="maxUrange" value="3.0" />
+
+
+
+
+    <!--
+
+<param name="maxRange" value="4.0" />
+<param name="maxUrange" value="3.0" />
+<param name="srr" value="0.01" />
+<param name="srt" value="0.02" />
+<param name="str" value="0.01" />
+<param name="stt" value="0.02" />
+<param name="minimumScore" value="50" />
+    <param name="resampleThreshold" value="0.25" />
+    -->
+
   </node>
   <node name="rviz" pkg="rviz" type="rviz" />
 </launch>
