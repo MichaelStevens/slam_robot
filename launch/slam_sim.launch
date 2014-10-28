@@ -3,13 +3,13 @@
   <param name="robot_description" command="$(find xacro)/xacro.py $(find slam_robot)/urdf/pioneer3dx.xacro" />
   <include file="$(find slam_robot)/launch/tf_server.launch" />
   <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
-  <param name="maxUrange" value="3.0" />
-
+  <param name="maxUrange" value="5.5" />
+  <param name="maxRange" value="Inf" />
 
 
 
     <!--
-
+<param name="maxUrange" value="3.0" />
 <param name="maxRange" value="4.0" />
 <param name="maxUrange" value="3.0" />
 <param name="srr" value="0.01" />
