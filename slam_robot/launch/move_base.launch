@@ -7,6 +7,7 @@
     <rosparam file="$(find slam_robot)/costmaps/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find slam_robot)/costmaps/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find slam_robot)/costmaps/base_local_planner_params.yaml" command="load" />
+    <param name="base_local_planner" value="slam_robot/TrajectoryPlannerDiffROS" />
     <remap from="/cmd_vel" to="/RosAria/cmd_vel"/>
   </node>
 </launch>
