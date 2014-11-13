@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(dwa_diff_local_planner)
+project(trajectory_planner_diff)
 
 find_package(catkin REQUIRED
         COMPONENTS
@@ -29,24 +29,24 @@ link_directories(${catkin_LIBRARY_DIRS})
 
 # dynamic reconfigure
 generate_dynamic_reconfigure_options(
-    cfg/DWADiffPlanner.cfg
+    cfg/TrajectoryPlannerDiff.cfg
 )
 
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES dwa_diff_local_planner
+    LIBRARIES trajectory_planner_diff
     CATKIN_DEPENDS
         dynamic_reconfigure
         pluginlib
         roscpp
 )
 
-add_library(dwa_diff_local_planner src/dwa_diff_planner.cpp src/dwa_diff_planner_ros.cpp)
-target_link_libraries(dwa_diff_local_planner base_local_planner ${catkin_LIBRARIES})
-add_dependencies(dwa_diff_local_planner dwa_diff_local_planner_gencfg)
-add_dependencies(dwa_diff_local_planner nav_msgs_gencpp)
+add_library(trajectory_planner_diff src/trajectory_planner_diff.cpp src/trajectory_planner_diff_ros.cpp)
+target_link_libraries(trajectory_planner_diff base_local_planner ${catkin_LIBRARIES})
+add_dependencies(trajectory_planner_diff trajectory_planner_diff_gencfg)
+add_dependencies(trajectory_planner_diff nav_msgs_gencpp)
 
-install(TARGETS dwa_diff_local_planner
+install(TARGETS trajectory_planner_diff
        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
        )
 

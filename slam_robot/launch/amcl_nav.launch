@@ -1,5 +1,5 @@
 <launch>
-  <param name="use_sim_time" value="true" />
+  
   <include file="$(find slam_robot)/launch/tf_server.launch" />
   <include file="$(find slam_robot)/launch/robot_drivers.launch" />
   <node name="map_server" pkg="map_server" type="map_server" args="$(find slam_robot)/maps/labmap.yaml"/>

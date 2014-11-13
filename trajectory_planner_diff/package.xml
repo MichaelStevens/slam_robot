@@ -1,5 +1,5 @@
 <package>
-    <name>dwa_diff_local_planner</name>
+    <name>trajectory_planner_diff</name>
     <version>1.11.13</version>
     <description>
 
