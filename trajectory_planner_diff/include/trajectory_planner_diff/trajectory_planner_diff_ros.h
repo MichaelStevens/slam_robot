@@ -71,6 +71,8 @@
 #include <trajectory_planner_diff/TrajectoryPlannerDiffConfig.h>
 
 #include <base_local_planner/odometry_helper_ros.h>
+#include <Eigen/Core>
+#include <cmath>
 
 using namespace base_local_planner;
 
@@ -216,6 +218,7 @@ namespace trajectory_planner_diff {
       double acc_lim_x_, acc_lim_y_, acc_lim_theta_;
       double sim_period_;
       bool rotating_to_goal_;
+      bool rotated_to_path_;
       bool reached_goal_;
       bool latch_xy_goal_tolerance_, xy_tolerance_latch_;
 

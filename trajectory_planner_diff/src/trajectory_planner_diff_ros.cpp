@@ -106,6 +106,7 @@ namespace trajectory_planner_diff {
       double stop_time_buffer;
       std::string world_model_type;
       rotating_to_goal_ = false;
+      rotated_to_path_ = false;
 
       //initialize the copy of the costmap the controller will use
       costmap_ = costmap_ros_->getCostmap();
@@ -425,6 +426,47 @@ namespace trajectory_planner_diff {
     double goal_th = yaw;
 
     //check to see if we've reached the goal position
+    if (!rotated_to_path_) {
+
+
+      //we need to call the next two lines to make sure that the trajectory
+      //planner updates its path distance and goal distance grids
+      tc_->updatePlan(transformed_plan);
+      Trajectory path = tc_->findBestPath(global_pose, robot_vel, drive_cmds);
+      map_viz_.publishCostCloud(costmap_);
+
+      double x1,x2, y1, y2;
+      int i = std::min(10, transformed_plan.size() - 1);
+      x1 = transformed_plan[0].pose.position.x;
+      y1 = transformed_plan[0].pose.position.y;
+      x2 = transformed_plan[i].pose.position.x;
+      y2 = transformed_plan[i].pose.position.y;
+      Eigen::Vector2d dir(x2 - x1, y2 - y1);
+      dir.normalize();
+
+      double yaw = acos(dir.x());
+
+      double angle = getGoalOrientationAngleDifference(global_pose, yaw);
+
+      //check to see if the goal orientation has been reached
+      if (fabs(angle) <= yaw_goal_tolerance_) {
+        //set the velocity command to zero
+        rotated_to_path_ = true;
+      }
+
+      ROS_INFO("Yaw: %.9f", yaw * (180.0 / 3.14159265358));
+      int i = transformed_plan.size();
+      ROS_INFO("Size: %d", i);
+
+      bool isOk = rotateToGoal(
+                    global_pose,
+                    robot_vel,
+                    yaw,
+                    cmd_vel);
+
+      return isOk;
+    }
+
     if (xy_tolerance_latch_ || (getGoalPositionDistance(global_pose, goal_x, goal_y) <= xy_goal_tolerance_)) {
 
       //if the user wants to latch goal tolerance, if we ever reach the goal location, we'll
