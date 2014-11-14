@@ -323,6 +323,7 @@ namespace trajectory_planner_diff {
     cmd_vel.linear.y = 0;
     double ang_diff = angles::shortest_angular_distance(yaw, goal_th);
 
+
     double v_theta_samp = ang_diff > 0.0 ? std::min(max_vel_th_,
         std::max(min_in_place_vel_th_, ang_diff)) : std::max(min_vel_th_,
         std::min(-1.0 * min_in_place_vel_th_, ang_diff));
@@ -373,6 +374,7 @@ namespace trajectory_planner_diff {
     xy_tolerance_latch_ = false;
     //reset the at goal flag
     reached_goal_ = false;
+    rotated_to_path_ = false;
     return true;
   }
 
@@ -425,9 +427,8 @@ namespace trajectory_planner_diff {
 
     double goal_th = yaw;
 
-    //check to see if we've reached the goal position
+    //before we trundle off, make sure we are faceing the path
     if (!rotated_to_path_) {
-
 
       //we need to call the next two lines to make sure that the trajectory
       //planner updates its path distance and goal distance grids
@@ -436,7 +437,7 @@ namespace trajectory_planner_diff {
       map_viz_.publishCostCloud(costmap_);
 
       double x1,x2, y1, y2;
-      int i = std::min(10, transformed_plan.size() - 1);
+      int i = std::min(10, (int)transformed_plan.size() - 1);
       x1 = transformed_plan[0].pose.position.x;
       y1 = transformed_plan[0].pose.position.y;
       x2 = transformed_plan[i].pose.position.x;
@@ -444,25 +445,19 @@ namespace trajectory_planner_diff {
       Eigen::Vector2d dir(x2 - x1, y2 - y1);
       dir.normalize();
 
-      double yaw = acos(dir.x());
-
-      double angle = getGoalOrientationAngleDifference(global_pose, yaw);
-
-      //check to see if the goal orientation has been reached
-      if (fabs(angle) <= yaw_goal_tolerance_) {
-        //set the velocity command to zero
-        rotated_to_path_ = true;
-      }
-
-      ROS_INFO("Yaw: %.9f", yaw * (180.0 / 3.14159265358));
-      int i = transformed_plan.size();
-      ROS_INFO("Size: %d", i);
+      double yaw = acos(dir.x()) * sign(dir.y());
 
       bool isOk = rotateToGoal(
                     global_pose,
                     robot_vel,
                     yaw,
                     cmd_vel);
+
+      //check to see if the goal orientation has been reached
+      double angle = getGoalOrientationAngleDifference(global_pose, yaw);
+      if (fabs(angle) <= yaw_goal_tolerance_) {
+        rotated_to_path_ = true;
+      }
 
       return isOk;
     }
@@ -484,6 +479,7 @@ namespace trajectory_planner_diff {
         cmd_vel.angular.z = 0.0;
         rotating_to_goal_ = false;
         xy_tolerance_latch_ = false;
+        rotated_to_path_ = false;
         reached_goal_ = true;
       } else {
         //we need to call the next two lines to make sure that the trajectory

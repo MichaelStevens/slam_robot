@@ -1,4 +1,4 @@
-TrajectoryPlannerDiffROS:  
+TrajectoryPlannerDiffROS:
     acc_lim_theta: 3.2
     acc_lim_x: 2.5
     acc_lim_y: 2.5
@@ -13,8 +13,8 @@ TrajectoryPlannerDiffROS:
     heading_scoring_timestep: 0.1
     holonomic_robot: false
     max_vel_theta: 1.0
-    max_vel_x: 0.55
-    min_in_place_vel_theta: 0.4
+    max_vel_x: 0.35
+    min_in_place_rotational_vel: 0.7
     min_vel_theta: -1.0
     min_vel_x: 0.0
     occdist_scale: 0.01
