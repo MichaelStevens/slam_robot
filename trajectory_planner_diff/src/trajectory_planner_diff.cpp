@@ -71,7 +71,7 @@ namespace trajectory_planner_diff{
 
       max_vel_th_ = config.max_vel_theta;
       min_vel_th_ = config.min_vel_theta;
-      min_in_place_vel_th_ = config.min_in_place_vel_theta;
+      min_in_place_vel_th_ = config.min_in_place_rotational_vel;
 
       sim_time_ = config.sim_time;
       sim_granularity_ = config.sim_granularity;

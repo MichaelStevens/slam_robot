@@ -7,7 +7,7 @@ TrajectoryPlannerDiffROS:
     escape_reset_dist: 0.1
     escape_reset_theta: 1.57079632679
     escape_vel: -0.1
-    gdist_scale: 0.8
+    gdist_scale: 0.6
     heading_lookahead: 0.325
     heading_scoring: false
     heading_scoring_timestep: 0.1
@@ -19,10 +19,11 @@ TrajectoryPlannerDiffROS:
     min_vel_x: 0.0
     occdist_scale: 0.01
     oscillation_reset_dist: 0.05
-    pdist_scale: 0.6
+    pdist_scale: 0.8
     restore_defaults: false
     sim_granularity: 0.025
     sim_time: 1.7
     simple_attractor: false
     vtheta_samples: 20
     vx_samples: 20
+    controller_frequency: 15
