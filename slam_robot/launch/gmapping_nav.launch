@@ -1,6 +1,8 @@
 <launch>
   <include file="$(find slam_robot)/launch/tf_server.launch" />
   <include file="$(find slam_robot)/launch/robot_drivers.launch" />
+  <include file="$(find slam_robot)/launch/global_map.launch" />
+  
   <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
     <param name="maxUrange" value="5.5" />
     <param name="maxRange" value="6" />
