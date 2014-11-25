@@ -1,7 +1,0 @@
-<launch>
-  <!-- publish laser scans -->
-  <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" />
-
-  <!-- subscribe to cmd_vel -->
-  <node name="RosAria" pkg="rosaria" type="RosAria" />
-</launch>

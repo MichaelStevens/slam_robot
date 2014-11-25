@@ -1,5 +1,0 @@
-<launch>
-	<include file="$(find slam_robot)/launch/tf_server.launch" />
-	<include file="$(find slam_robot)/launch/robot_drivers.launch" />
-	<include file="$(find slam_robot)/launch/xbox_teleop.launch" />
-</launch>

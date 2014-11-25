@@ -1,8 +1,4 @@
 <launch>
 	<include file="$(find slam_robot)/launch/include/robot_drivers.launch" />
 	<include file="$(find slam_robot)/launch/include/xbox_teleop.launch" />
-	
-  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
-		<rosparam file="$(find slam_robot)/params/gmapping_params.yaml" command="load" />
-	</node>
 </launch>
