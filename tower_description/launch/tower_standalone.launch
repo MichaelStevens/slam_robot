@@ -1,0 +1,12 @@
+<launch>
+
+	<!-- send the robot XML to param server -->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find tower_description)/urdf/tower_standalone.urdf.xacro" />
+
+	<!-- Start the joint state publisher. It will publish 0 for all joints but is required for valid robot_state_publisher operation -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  
+	<!-- Start robot state publisher to publish all required transforms to /tf --> 
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+</launch>

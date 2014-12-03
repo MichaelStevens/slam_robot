@@ -1,0 +1,26 @@
+<package>
+  <description brief="puntar_description">
+
+     puntar_description
+
+  </description>
+  <author>Aleksandrs Ecins</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/puntar_description</url>
+
+
+  <depend package="convex_decomposition"/>
+  <depend package="ivcon"/>
+  <depend package="urdf" />
+  <depend package="xacro" />
+  <depend package="gazebo" />
+  <depend package="gazebo_tools" />
+
+  <!-- Other description files -->
+  <depend package="pioneer3dx_description" />
+  <depend package="hokuyo_urg_description" />
+
+</package>
+
+

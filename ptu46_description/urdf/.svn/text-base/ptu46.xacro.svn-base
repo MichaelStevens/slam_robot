@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<robot>
+
+  <include filename="$(find ptu46_description)/urdf/ptu_axis_calibration.xacro" />
+  
+  <property name="M_PI" value="3.14159"/>
+  
+  <macro name="ptu46" params="name parent *origin" >
+
+    <!-- Joint between tower top and ptu base --> 
+    <joint name="${name}_base_joint" type="fixed">
+      <insert_block name="origin" /> 
+      <parent link="${parent}"/>
+      <child link="${name}_base_link"/>
+    </joint>
+
+    <link name="${name}_base_link">
+      <!-- Interial data is missing -->
+ 	  	<visual name="${name}_base_visual">
+	      <origin xyz="0.01207 -0.03701  0.0" rpy="0 0 ${M_PI/2}"/>
+	      <geometry name="ptu46_base_geom">
+		      <mesh filename="package://ptu46_description/meshes/ptu46_base.stl"/>
+	      </geometry>
+	      <material name="PTUBlack">
+          <color rgba="0.0 0.0 0.0 1"/>
+	    </material>
+      </visual>
+      <!-- Collision data is missing -->
+    </link>
+  
+    <!-- Joint between the PTU mount frame and pan link --> 
+<!--    <joint name="${name}_pan" type="continuous"> -->
+    <joint name="${name}_pan_joint" type="continuous">
+			<axis xyz="${pan_axis_x} ${pan_axis_y} ${pan_axis_z}" />
+      <origin xyz="-0.00953 -0.01272 0.04572" rpy="0 0 0" />        <!-- Measurements from manual -->
+      <parent link="${name}_base_link"/>
+      <child link="${name}_pan_link"/>
+    </joint>
+    
+    <!-- PTU pan link -->
+    <link name="${name}_pan_link">
+      <!-- Interial data is missing -->
+ 	  	<visual name="${name}_pan_visual">
+	      <origin xyz="0.0203 -0.0205 0.0011" rpy="0 0 ${M_PI/2}"/>	      
+	      <geometry name="ptu46_pan_geom">
+		      <mesh filename="package://ptu46_description/meshes/ptu46_pan.stl"/>
+	      </geometry>
+	      <material name="PTURed">
+          <color rgba="1.0 0.0 0.0 1"/>
+	    </material>
+      </visual>
+      <!-- Collision data is missing -->  
+    </link>
+    
+    <!-- Joint between the pan link and tilt link -->
+<!--    <joint name="${name}_tilt" type="continuous"> -->
+    <joint name="${name}_tilt_joint" type="continuous">
+			<axis xyz="${tilt_axis_x} ${tilt_axis_y} ${tilt_axis_z}" />
+      <origin xyz="0.0 0.0 0.04597" rpy="0 0 0" />                    <!-- Measurements from manual -->
+      <parent link="${name}_pan_link"/>
+      <child link="${name}_tilt_link"/>
+    </joint>
+    
+    <!-- PTU tilt link -->
+    <link name="${name}_tilt_link">
+ 	  	<visual name="${name}_tilt_visual">
+<!--	      <origin xyz="-0.0 -0.03207 -0.01168" rpy="0 0 0.0"/>	      -->
+        <origin xyz="-0.01007 -0.03207 -0.02" rpy="0 0 0.0"/>
+	      <geometry name="ptu46_tilt_geom">
+		      <mesh filename="package://ptu46_description/meshes/ptu46_tilt.stl"/>
+	      </geometry>
+	      <material name="PTUBlack">
+          <color rgba="0.0 0.0 0.0 1"/>
+	    </material>
+      </visual>
+      <!-- Collision data is missing -->   
+    </link>
+  </macro>
+</robot>

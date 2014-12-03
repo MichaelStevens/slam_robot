@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- Translation -->
+  <property name="ptu_calib_kinect_x" value="0.006158890182894" />
+  <property name="ptu_calib_kinect_y" value="-0.003516948588585" />
+  <property name="ptu_calib_kinect_z" value="0.092523143331173" />
+  
+  <!-- Rotation -->
+<!--  <property name="ptu_calib_kinect_rr" value="0.052029522967417" />
+  <property name="ptu_calib_kinect_rp" value="-0.052003673205103" />
+  <property name="ptu_calib_kinect_ry" value="0.051996326794897" />-->
+  
+  <property name="ptu_calib_kinect_rr" value="0.0" />
+  <property name="ptu_calib_kinect_rp" value="0.0" />
+  <property name="ptu_calib_kinect_ry" value="0.0" />  
+  
+</robot>

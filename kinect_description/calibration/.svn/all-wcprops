@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/cvl/POETICON/!svn/ver/288/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/calibration
+END
+ptu_kinect_calibration.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/cvl/POETICON/!svn/ver/288/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/calibration/ptu_kinect_calibration.xacro
+END
+openni_params.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/cvl/POETICON/!svn/ver/253/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/calibration/openni_params.yaml
+END

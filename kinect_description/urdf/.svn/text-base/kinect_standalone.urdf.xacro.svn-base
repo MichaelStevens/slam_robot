@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<robot name="turtlebot"  
+       xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+  <include filename="$(find kinect_description)/urdf/kinect.urdf.xacro" />
+
+  <property name="M_PI" value="3.14159"/>
+  <property name="SCALE" value="0.0254"/>
+  
+  <!-- Base link -->
+  <link name="ptu_pan_link" />
+  
+  <!-- Kinect frames and mounting (includes simulation) -->
+  <kinect name="kinect" parent="ptu_pan_link"/>
+</robot>

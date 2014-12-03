@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/cvl/POETICON/!svn/ver/288/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/urdf
+END
+kinect_standalone.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/cvl/POETICON/!svn/ver/253/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/urdf/kinect_standalone.urdf.xacro
+END
+kinect_old.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/cvl/POETICON/!svn/ver/288/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/urdf/kinect_old.urdf.xacro
+END
+kinect.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/cvl/POETICON/!svn/ver/288/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/urdf/kinect.urdf.xacro
+END
+kinect.gazebo.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/cvl/POETICON/!svn/ver/254/workspace/ros/stacks/umd-ros-pkg/umd_robots/kinect_description/urdf/kinect.gazebo.urdf.xacro
+END

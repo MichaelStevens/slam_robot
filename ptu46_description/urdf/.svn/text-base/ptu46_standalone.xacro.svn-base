@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<robot name="dp_ptu46_standalone">
+
+    <!-- Included URDF Files -->
+    <include filename="$(find ptu46_description)/urdf/ptu46.xacro" />
+
+		<!-- Base link -->
+		<link name="base_link" />
+
+    <!-- PTU ATTACHMENT -->
+    <ptu46 name="ptu" parent="base_link">
+        <origin xyz="0.0 0.0 0.5" rpy="0 0 0" />
+    </ptu46>
+
+</robot>

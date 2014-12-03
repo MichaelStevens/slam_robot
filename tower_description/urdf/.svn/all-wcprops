@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/cvl/POETICON/!svn/ver/259/workspace/ros/stacks/umd-ros-pkg/umd_robots/tower_description/urdf
+END
+tower_standalone.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/cvl/POETICON/!svn/ver/259/workspace/ros/stacks/umd-ros-pkg/umd_robots/tower_description/urdf/tower_standalone.urdf.xacro
+END
+tower.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/cvl/POETICON/!svn/ver/257/workspace/ros/stacks/umd-ros-pkg/umd_robots/tower_description/urdf/tower.urdf.xacro
+END

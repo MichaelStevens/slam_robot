@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/cvl/POETICON/!svn/ver/292/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf
+END
+base.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/cvl/POETICON/!svn/ver/279/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf/base.urdf.xacro
+END
+puntar_full.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/cvl/POETICON/!svn/ver/292/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf/puntar_full.urdf.xacro
+END
+erratic_hokuyo_laser.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/cvl/POETICON/!svn/ver/172/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf/erratic_hokuyo_laser.xacro
+END
+base_ptu_kinect.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/cvl/POETICON/!svn/ver/279/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf/base_ptu_kinect.urdf.xacro
+END
+base_laser.urdf.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/cvl/POETICON/!svn/ver/279/workspace/ros/stacks/umd-ros-pkg/umd_robots/puntar_description/urdf/base_laser.urdf.xacro
+END

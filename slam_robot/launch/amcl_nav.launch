@@ -2,7 +2,7 @@
   <include file="$(find slam_robot)/launch/include/robot_drivers.launch" />
   <node name="map_server" pkg="map_server" type="map_server" args="$(find slam_robot)/maps/labmap.yaml"/>
   <node pkg="amcl" type="amcl" name="amcl" output="screen">
-    <rosparam file="$(find slam_robot)/params/acml_params.yaml" command="load" />
+    <rosparam file="$(find slam_robot)/params/amcl_params.yaml" command="load" />
   </node>
   <include file="$(find slam_robot)/launch/include/nav_base.launch" />
 </launch>

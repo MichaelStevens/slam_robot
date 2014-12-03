@@ -1,0 +1,26 @@
+<launch>
+
+	<!-- send the robot XML to param server -->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find kinect_description)/urdf/kinect_standalone.urdf.xacro" />
+
+	<!-- Start the joint state publisher. It will publish 0 for all joints but is required for valid robot_state_publisher operation -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  
+	<!-- Start robot state publisher to publish all required transforms to /tf --> 
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	
+	<!-- Kinect node -->
+  <node name="kinect" pkg="openni_camera" type="openni_node" respawn="false" output="screen">
+    <param name="rgb_frame_id" value="kinect_rgb_optical_frame" />
+    <param name="depth_frame_id" value="kinect_depth_optical_frame" />
+    <param name="depth_registration" value="false" />
+    <param name="image_mode" value="2" />
+    <param name="depth_mode" value="2" />
+    <param name="debayering" value="2" />
+    <param name="depth_time_offset" value="-0.055" />
+    <param name="image_time_offset" value="0" />
+
+    <rosparam command="load" file="$(find kinect_description)/calibration/openni_params.yaml" />
+  </node>
+  
+</launch>

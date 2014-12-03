@@ -1,0 +1,14 @@
+<package>
+  <description brief="kinect_description">
+
+     kinect_description
+
+  </description>
+  <author>Aleksandrs Ecins</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kinect_description</url>
+
+</package>
+
+

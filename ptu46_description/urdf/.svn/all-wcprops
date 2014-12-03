@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/cvl/POETICON/!svn/ver/308/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/urdf
+END
+ptu46_standalone.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/cvl/POETICON/!svn/ver/253/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/urdf/ptu46_standalone.xacro
+END
+ptu46.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/cvl/POETICON/!svn/ver/275/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/urdf/ptu46.xacro
+END
+ptu_axis_calibration.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/cvl/POETICON/!svn/ver/308/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/urdf/ptu_axis_calibration.xacro
+END

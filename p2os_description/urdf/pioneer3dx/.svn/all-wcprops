@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/cvl/POETICON/!svn/ver/158/workspace/ros/stacks/p2os/p2os_description/urdf/pioneer3dx
+END
+pioneer3dx_wheel.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/cvl/POETICON/!svn/ver/158/workspace/ros/stacks/p2os/p2os_description/urdf/pioneer3dx/pioneer3dx_wheel.xacro
+END
+pioneer3dx_hokuyo_urg.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/cvl/POETICON/!svn/ver/158/workspace/ros/stacks/p2os/p2os_description/urdf/pioneer3dx/pioneer3dx_hokuyo_urg.xacro
+END
+pioneer3dx.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/cvl/POETICON/!svn/ver/158/workspace/ros/stacks/p2os/p2os_description/urdf/pioneer3dx/pioneer3dx.xacro
+END
+pioneer3dx_orig.2.xacro
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/cvl/POETICON/!svn/ver/158/workspace/ros/stacks/p2os/p2os_description/urdf/pioneer3dx/pioneer3dx_orig.2.xacro
+END

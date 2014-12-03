@@ -1,0 +1,32 @@
+<launch>
+
+	<param name="use_sim_time" value="true" />
+
+	<!-- Load Gazebo world -->
+    <include file="$(find gazebo_worlds)/launch/wg_world.launch"/>
+
+	<!-- send the robot XML to param server -->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find p2os_description)/urdf/pioneer3dx/pioneer3dx.xacro" />
+
+	<!-- push robot_description to factory and spawn robot in gazebo -->
+	<node name="spawn_pioneer" pkg="gazebo" type="spawn_model"
+		  args="-z 0.051
+              	-urdf
+              	-param robot_description
+              	-model robot_description"
+          respawn="false" output="screen" />
+
+	<!-- Launch center wheel swivel transformations needed to properly display urdf model in rviz 
+	<node name="swivel_transform" pkg="p2os_description" type="publisher"/> -->
+
+	<!-- No idea what these lines do and if they are needed -->
+	<!-- Controller Manager -->
+	<include file="$(find pr2_controller_manager)/controller_manager.launch" />
+
+	<!-- Joystick teleoperation 
+	<include file="$(find p2os_teleop)/launch/joystick_teleop.launch" /> -->
+
+	<!-- Keyboard teleoperation-->
+	<include file="$(find p2os_teleop)/launch/keyboard_teleop.launch" /> 
+
+</launch>

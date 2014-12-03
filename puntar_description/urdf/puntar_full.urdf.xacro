@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<robot name="puntar"
+    xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- Included URDF Files -->
+    <xacro:include filename="$(find p2os_description)/urdf/pioneer3dx/pioneer3dx.xacro" />          <!-- Pioneer base -->
+    <xacro:include filename="$(find ptu46_description)/urdf/ptu46.xacro.old" />                         <!-- PTU -->
+    <xacro:include filename="$(find puntar_description)/urdf/erratic_hokuyo_laser.xacro" />         <!-- Erratic laser -->
+    <xacro:include filename="$(find kinect_description)/urdf/kinect.urdf.xacro" />                  <!-- Kinect -->
+    <xacro:include filename="$(find tower_description)/urdf/tower.urdf.xacro" />                    <!-- Tower -->
+
+    <!-- PIONEER 3DX BASE -->
+    <pioneer3dx />
+
+    <!-- HOKUYO LASER ATTACHMENT -->
+    <erratic_hokuyo_laser parent="top_plate">
+        <origin xyz="0.188 0.0 0.0" rpy="0 0 0" />                                             <!-- Measurement selected visually from the 3D model -->
+    </erratic_hokuyo_laser>
+
+    <!-- TOWER ATTACHEMENT-->
+    <tower name="tower" parent="top_plate">
+        <origin xyz="0.148 0.0 0.0" rpy="0 0 0" />                                            <!-- Measurement made with ruler -->
+    </tower>
+
+    <!-- PTU ATTACHMENT -->
+    <ptu46 name="ptu" parent="tower_top_link">
+      <origin xyz="-0.1 0.0127254 0.0" rpy="0 0 0" />                                            <!-- Measurement made with ruler -->
+    </ptu46>
+    <!--
+    <ptu_d46 name="ptu" />
+
+
+    <joint name="base_to_ptu_base" type="fixed">
+      <parent link="tower_top_link"/>
+      <child link="ptu_base_link"/>
+      <origin xyz="-0.1 0.0127254 0.0" rpy="0 0 0" />
+    </joint>
+  -->
+
+    <!-- KINECT ATTACHEMENT -->
+
+    <kinect name="camera" parent="ptu_tilt_link">
+      <origin xyz="0.0 0.0 0" rpy="0 0 0" />
+    </kinect>
+
+
+</robot>

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/cvl/POETICON/!svn/ver/173/workspace/ros/stacks/umd-ros-pkg/umd_robots/hokuyo_urg_description
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/cvl/POETICON/!svn/ver/172/workspace/ros/stacks/umd-ros-pkg/umd_robots/hokuyo_urg_description/manifest.xml
+END
+mainpage.dox
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/cvl/POETICON/!svn/ver/172/workspace/ros/stacks/umd-ros-pkg/umd_robots/hokuyo_urg_description/mainpage.dox
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/cvl/POETICON/!svn/ver/172/workspace/ros/stacks/umd-ros-pkg/umd_robots/hokuyo_urg_description/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/cvl/POETICON/!svn/ver/172/workspace/ros/stacks/umd-ros-pkg/umd_robots/hokuyo_urg_description/Makefile
+END

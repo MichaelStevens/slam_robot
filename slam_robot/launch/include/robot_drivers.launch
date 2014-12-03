@@ -1,6 +1,6 @@
 <launch>
   <!-- load robot description into the parameter server for the robot_state_publisher -->
-  <param name="robot_description" command="$(find xacro)/xacro.py $(find slam_robot)/urdf/pioneer3dx.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find puntar_description)/urdf/puntar_full.urdf.xacro" />
 
   <!-- publish all joint positions as '0' -->
   <node pkg="p2os_urdf" type="p2os_publisher" name="p2os_publisher"/>
@@ -11,8 +11,20 @@
     <param name="tf_prefix" type="string" value=""/>
   </node>
 
+  <!-- publish ptu state -->
+  <node name="ptu_driver" pkg="flir_ptu_driver" type="ptu_node" ns="ptu">
+    <param name="port" value="/dev/ttyUSB1" />
+    <remap from="state" to="/joint_states" />
+  </node>
+
+  <!-- publish kinect data -->
+  <arg name="publish_tf" value="false" />
+  <include file="$(find freenect_launch)/launch/freenect.launch">
+  
   <!-- publish laser scans -->
-  <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" />
+  <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node">
+    <param name="frame_id" value="/base_scan_link"/>
+  </node>
 
   <!-- subscribe to cmd_vel -->
   <node name="RosAria" pkg="rosaria" type="RosAria" />

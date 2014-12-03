@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- Pan axis -->
+  <property name="pan_axis_x" value="0.0" />
+  <property name="pan_axis_y" value="0.0" />
+  <property name="pan_axis_z" value="1.0" />
+  
+  <!-- Tilt axis -->  
+  <property name="tilt_axis_x" value="0.0" />
+  <property name="tilt_axis_y" value="-1.0" />
+  <property name="tilt_axis_z" value="0.0" />
+</robot>

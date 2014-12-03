@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<robot name="tower_standalone">
+
+    <!-- Included URDF Files -->
+    <include filename="$(find tower_description)/urdf/tower.urdf.xacro" />
+
+		<!-- Base link -->
+		<link name="base_link" />
+
+    <!-- PTU ATTACHMENT -->
+    <tower name="tower" parent="base_link">
+        <origin xyz="0.148 0.0 0.0" rpy="0 0 0" />
+    </tower>
+
+</robot>

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/cvl/POETICON/!svn/ver/275/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/meshes
+END
+ptu46_tilt.stl
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/cvl/POETICON/!svn/ver/275/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/meshes/ptu46_tilt.stl
+END
+ptu46_pan.stl
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/cvl/POETICON/!svn/ver/258/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/meshes/ptu46_pan.stl
+END
+ptu46_base.stl
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/cvl/POETICON/!svn/ver/275/workspace/ros/stacks/umd-ros-pkg/umd_robots/ptu46_description/meshes/ptu46_base.stl
+END

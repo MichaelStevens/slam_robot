@@ -1,0 +1,27 @@
+<launch>
+
+	<!-- send the robot XML to param server -->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find ptu46_description)/urdf/ptu46_standalone.xacro" />
+
+	<!-- Start the joint state publisher. It will publish 0 for all joints but is required for valid robot_state_publisher operation -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+		<rosparam param="source_list">[/ptu46_node/state]</rosparam>
+	</node>
+  
+	<!-- Start robot state publisher to publish all required transforms to /tf --> 
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  
+  <!-- Use GUI to control joints 
+  <param name="use_gui" value="true" />-->
+  
+  <!-- Use PTU driver to control joints -->
+	<node name="ptu" pkg="ptu46" type="ptu46" output="screen">
+		<param name="port" value="/dev/ttyUSB1"/>
+	</node>
+	
+	<node name="ptu_action_server" pkg="ptu46" type="ptu_action_server.py" output="screen">
+		<remap from="cmd" to="/ptu/cmd"/>
+		<remap from="state" to="/ptu/state"/>
+	</node>
+  
+</launch>
