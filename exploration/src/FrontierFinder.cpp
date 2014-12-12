@@ -1,63 +1,83 @@
-// MinPos Exploration Planner
-// Detailed description in:
-// Bautin, A., & Simonin, O. (2012). MinPos : A Novel Frontier Allocation Algorithm for Multi-robot Exploration. ICIRA, 496–508.
 #include "ros/ros.h"
 #include "FrontierFinder.h"
 #include <visualization_msgs/Marker.h>
 
-FrontierFinder::FrontierFinder()
-{
-	ros::NodeHandle robotNode;
-	robotNode.param("robot_id", mRobotID, 1);
-
-	ros::NodeHandle navigatorNode("~/");
-	navigatorNode.param("min_target_area_size", mMinTargetAreaSize, 10.0);
-	navigatorNode.param("visualize_frontiers", mVisualizeFrontiers, true);
-
-	if(mVisualizeFrontiers)
-	{
-		mFrontierPublisher = navigatorNode.advertise<visualization_msgs::Marker>("frontiers", 1, true);
-	}
-
-	mPlan = NULL;
-}
-
-FrontierFinder::~FrontierFinder()
-{
-	if(mPlan)
-		delete[] mPlan;
-}
-
 typedef std::multimap<double,unsigned int> Queue;
 typedef std::pair<double,unsigned int> Entry;
 
-int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsigned int &goal) {
+//	publisher = navigatorNode.advertise<visualization_msgs::Marker>("frontiers", 1, true);
+
+void findCluster(GridMap* map, double* plan, unsigned int* offset,
+																 std::vector<Frontier> &frontiers,unsigned int &frontierCells,
+																 unsigned int startCell, double minTargetAreaSize) {
+	// Create a new frontier and expand it
+	Frontier front;
+	int frontNumber = -2 - frontiers.size();
+	int minAreaSize = minTargetAreaSize / (map->getResolution() * map->getResolution());
+
+	// Initialize a new queue with the found frontier cell
+	Queue frontQueue;
+	frontQueue.insert(Entry(0.0, startCell));
+	bool isBoundary = false;
+
+	//	Queue unexplQueue;
+	//	int areaSize = 0;
+
+	while(!frontQueue.empty())
+	{
+		// Get the nearest cell from the queue
+		Queue::iterator next = frontQueue.begin();
+		double distance = next->first;
+		unsigned int index = next->second;
+		unsigned int x, y;
+		frontQueue.erase(next);
+
+		// Check if it is a frontier cell
+		if(!map->isFrontier(index)) continue;
+
+		// Add it to current frontier
+		front.push_back(index);
+		frontierCells++;
+
+		// Add all adjacent cells to queue
+		for(unsigned int it = 0; it < 4; it++)
+		{
+			int i = index + offset[it];
+			if(map->isFree(i) && plan[i] == -1)
+			{
+				plan[i] = distance + map->getResolution();
+				frontQueue.insert(Entry(distance + map->getResolution(), i));
+			}
+		}
+	}
+	frontiers.push_back(front);
+}
+
+int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &frontiers,
+									ros::Publisher* publisher = NULL, double minTargetAreaSize = 10.0) {
+
 	ROS_INFO("Started Function");
 	// Create some workspace for the wavefront algorithm
 	unsigned int mapSize = map->getSize();
-	if(mPlan)
-		delete[] mPlan;
-	mPlan = new double[mapSize];
-	for(unsigned int i = 0; i < mapSize; i++)
-	{
-		mPlan[i] = -1;
-	}
+	double* plan = new double[mapSize];
 
-	mOffset[0] = -1;					// left
-	mOffset[1] =  1;					// right
-	mOffset[2] = -map->getWidth();	// up
-	mOffset[3] =  map->getWidth();	// down
-	mOffset[4] = -map->getWidth() - 1;
-	mOffset[5] = -map->getWidth() + 1;
-	mOffset[6] =  map->getWidth() - 1;
-	mOffset[7] =  map->getWidth() + 1;
+	for(unsigned int i = 0; i < mapSize; i++)	plan[i] = -1;
+
+	unsigned int offset[8];
+	offset[0] = -1;					// left
+	offset[1] =  1;					// right
+	offset[2] = -map->getWidth();	// up
+	offset[3] =  map->getWidth();	// down
+	offset[4] = -map->getWidth() - 1;
+	offset[5] = -map->getWidth() + 1;
+	offset[6] =  map->getWidth() - 1;
+	offset[7] =  map->getWidth() + 1;
 
 	ROS_INFO("Created workspace");
 
 	// 1. Frontiers identification and clustering
 	// =========================================================================
-	mFrontiers.clear();
-	mFrontierCells = 0;
+	unsigned int frontierCells = 0;
 
 	ROS_INFO("Cleared cells");
 
@@ -65,7 +85,7 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 	Queue queue;
 	Entry startPoint(0.0, start);
 	queue.insert(startPoint);
-	mPlan[start] = 0;
+	plan[start] = 0;
 
 	ROS_INFO("Initialized editor");
 
@@ -90,18 +110,18 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 		// Now continue 1st level WPA
 		for(unsigned int it = 0; it < 4; it++) {
 			ROS_INFO("Entered second loop");
-			unsigned int i = index + mOffset[it];
+			unsigned int i = index + offset[it];
 			ROS_INFO("1");
-			mPlan[i];
+			plan[i];
 			ROS_INFO("1.1");
 			map->isFree(i);
 			ROS_INFO("1.2");
-			if(mPlan[i] == -1 && map->isFree(i)) {
+			if(plan[i] == -1 && map->isFree(i)) {
 				ROS_INFO("2");
 				// Check if it is a frontier cell
 				if(map->isFrontier(i)) {
 					ROS_INFO("Finding cluster");
-					findCluster(map, i);
+					findCluster(map, plan, offset, frontiers, frontierCells, i, minTargetAreaSize);
 					ROS_INFO("Found cluster");
 				} else {
 					ROS_INFO("Inserting into queue");
@@ -109,7 +129,7 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 					ROS_INFO("Inserted into queue");
 				}
 				ROS_INFO("3");
-				mPlan[i] = distance+linear;
+				plan[i] = distance+linear;
 				ROS_INFO("4");
 			}
 		}
@@ -117,23 +137,23 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 
 	ROS_INFO("Finished finding frontiers");
 
-	ROS_DEBUG("[MinPos] Found %d frontier cells in %d frontiers.", mFrontierCells, (int)mFrontiers.size());
-	if(mFrontiers.size() == 0)
+	ROS_DEBUG("[MinPos] Found %d frontier cells in %d frontiers.", frontierCells, (int)frontiers.size());
+	if(frontiers.size() == 0)
 	{
 		if(cellCount > 50)
 		{
-			return EXPL_FINISHED;
+			return 0;
 		}else
 		{
 			ROS_WARN("[MinPos] No Frontiers found after checking %d cells!", cellCount);
-			return EXPL_FAILED;
+			return 0;
 		}
 	}
 
 	ROS_INFO("checked for 0 frontiers");
 
 	// Publish frontiers as marker for RVIZ
-	if(mVisualizeFrontiers)	{
+	if(publisher)	{
 		ROS_INFO("Publishing info to rviz");
 		visualization_msgs::Marker marker;
 		marker.header.frame_id = "/map";
@@ -155,22 +175,22 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 		marker.color.r = 1.0;
 		marker.color.g = 1.0;
 		marker.color.b = 1.0;
-		marker.points.resize(mFrontierCells);
-		marker.colors.resize(mFrontierCells);
+		marker.points.resize(frontierCells);
+		marker.colors.resize(frontierCells);
 		ROS_INFO("created marker");
 
 		unsigned int p = 0;
 		srand(1337);
-		for(unsigned int i = 0; i < mFrontiers.size(); i++)
+		for(unsigned int i = 0; i < frontiers.size(); i++)
 		{
 			char r = rand() % 256;
 			char g = rand() % 256;
 			char b = rand() % 256;
-			for(unsigned int j = 0; j < mFrontiers[i].size(); j++)
+			for(unsigned int j = 0; j < frontiers[i].size(); j++)
 			{
-				if(p < mFrontierCells)
+				if(p < frontierCells)
 				{
-					if(!map->getCoordinates(x, y, mFrontiers[i][j]))
+					if(!map->getCoordinates(x, y, frontiers[i][j]))
 					{
 						ROS_ERROR("[MinPos] getCoordinates failed!");
 						break;
@@ -185,102 +205,14 @@ int FrontierFinder::findExplorationTarget(GridMap* map, unsigned int start, unsi
 					marker.colors[p].a = 0.5;
 				}else
 				{
-					ROS_ERROR("[MinPos] SecurityCheck failed! (Asked for %d / %d)", p, mFrontierCells);
+					ROS_ERROR("[MinPos] SecurityCheck failed! (Asked for %d / %d)", p, frontierCells);
 				}
 				p++;
 			}
 		}
-		mFrontierPublisher.publish(marker);
+		publisher->publish(marker);
 	}
 
 
-	return EXPL_TARGET_SET;
-}
-
-void FrontierFinder::findCluster(GridMap* map, unsigned int startCell)
-{
-	// Create a new frontier and expand it
-	Frontier front;
-	int frontNumber = -2 - mFrontiers.size();
-	int minAreaSize = mMinTargetAreaSize / (map->getResolution() * map->getResolution());
-
-	// Initialize a new queue with the found frontier cell
-	Queue frontQueue;
-	frontQueue.insert(Entry(0.0, startCell));
-	bool isBoundary = false;
-
-//	Queue unexplQueue;
-//	int areaSize = 0;
-
-	while(!frontQueue.empty())
-	{
-		// Get the nearest cell from the queue
-		Queue::iterator next = frontQueue.begin();
-		double distance = next->first;
-		unsigned int index = next->second;
-		unsigned int x, y;
-		frontQueue.erase(next);
-
-		// Check if it is a frontier cell
-		if(!map->isFrontier(index)) continue;
-
-		// Add it to current frontier
-		front.push_back(index);
-		mFrontierCells++;
-
-		// Add all adjacent cells to queue
-		for(unsigned int it = 0; it < 4; it++)
-		{
-			int i = index + mOffset[it];
-			if(map->isFree(i) && mPlan[i] == -1)
-			{
-				mPlan[i] = distance + map->getResolution();
-				frontQueue.insert(Entry(distance + map->getResolution(), i));
-			}
-		}
-/*
-		// Calculate the size of the adjacent unknown region (as a kind of expected information gain)
-		unexplQueue.insert(Entry(0.0, index));
-		while(!unexplQueue.empty() && !isBoundary && areaSize <= minAreaSize)
-		{
-			// Get the nearest cell from the queue
-			Queue::iterator next2 = unexplQueue.begin();
-			double distance2 = next2->first;
-			unexplQueue.erase(next2);
-
-			unsigned int index2 = next2->second;
-			unsigned int i2, x2, y2;
-			if(!map->getCoords(x2, y2, index2))
-			{
-				ROS_WARN("[MinPos] Unknown cell in queue was out of map!");
-				continue;
-			}
-
-			std::vector<unsigned int> neighbors;
-			if(x2 > 0                  && map->getIndex(x2-1,y2  ,i2)) neighbors.push_back(i2); else isBoundary = true;
-			if(x2 < map->getWidth()-1  && map->getIndex(x2+1,y2  ,i2)) neighbors.push_back(i2); else isBoundary = true;
-			if(y2 > 0                  && map->getIndex(x2  ,y2-1,i2)) neighbors.push_back(i2); else isBoundary = true;
-			if(y2 < map->getHeight()-1 && map->getIndex(x2  ,y2+1,i2)) neighbors.push_back(i2); else isBoundary = true;
-
-			// Add all adjacent cells to queue
-			for(unsigned int it2 = 0; it2 < neighbors.size(); it2++)
-			{
-				i2 = neighbors[it2];
-				if(map->getData(i2) == -1 && mPlan[i2] != frontNumber)
-				{
-					mPlan[i2] = frontNumber;
-					unexplQueue.insert(Entry(distance2 + map->getResolution(), i2));
-					areaSize++;
-				}
-			}
-		}
-
-	}
-
-	ROS_DEBUG("[MinPos] Size of unknown area: %d / Boundary: %d", areaSize, isBoundary);
-	if(isBoundary || areaSize >= minAreaSize)
-		mFrontiers.push_back(front);
-*/
-	}
-	mFrontiers.push_back(front);
+	return 0;
 }

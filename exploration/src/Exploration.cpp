@@ -12,7 +12,6 @@ int main(int argc, char **argv) {
   ros::NodeHandle n;
   ros::ServiceClient dynamic_map_client = n.serviceClient<nav_msgs::GetMap>("dynamic_map");
   tf::TransformListener tfListener;
-  FrontierFinder frontierFinder;
   GridMap* gridMap = new GridMap();
 
   ros::Rate loop_rate(1);
@@ -35,7 +34,7 @@ int main(int argc, char **argv) {
         if(gridMap->getIndex(x, y, start)) {
           unsigned int _;
 
-          frontierFinder.findExplorationTarget(gridMap, start, _);
+          //frontierFinder.findExplorationTarget(gridMap, start, _);
 
           ROS_INFO("Published Frontiers");
         } else {
