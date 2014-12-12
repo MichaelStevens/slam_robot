@@ -22,9 +22,7 @@ void findCluster(GridMap* map, double* plan, unsigned int* offset,
 
 	//	Queue unexplQueue;
 	//	int areaSize = 0;
-
-	while(!frontQueue.empty())
-	{
+	while(!frontQueue.empty()) {
 		// Get the nearest cell from the queue
 		Queue::iterator next = frontQueue.begin();
 		double distance = next->first;
@@ -55,12 +53,9 @@ void findCluster(GridMap* map, double* plan, unsigned int* offset,
 
 int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &frontiers,
 									ros::Publisher* publisher = NULL, double minTargetAreaSize = 10.0) {
-
-	ROS_INFO("Started Function");
 	// Create some workspace for the wavefront algorithm
 	unsigned int mapSize = map->getSize();
 	double* plan = new double[mapSize];
-
 	for(unsigned int i = 0; i < mapSize; i++)	plan[i] = -1;
 
 	unsigned int offset[8];
@@ -73,32 +68,22 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 	offset[6] =  map->getWidth() - 1;
 	offset[7] =  map->getWidth() + 1;
 
-	ROS_INFO("Created workspace");
-
 	// 1. Frontiers identification and clustering
 	// =========================================================================
 	unsigned int frontierCells = 0;
-
-	ROS_INFO("Cleared cells");
 
 	// Initialize the queue with the robot position
 	Queue queue;
 	Entry startPoint(0.0, start);
 	queue.insert(startPoint);
 	plan[start] = 0;
-
-	ROS_INFO("Initialized editor");
-
 	Queue::iterator next;
 	unsigned int x, y, index;
 	double linear = map->getResolution();
 	int cellCount = 0;
 
-	ROS_INFO("Initialized iterator");
-
 	// Search for frontiers with wavefront propagation
 	while(!queue.empty()) {
-		ROS_INFO("Entered loop");
 		cellCount++;
 
 		// Get the nearest cell from the queue
@@ -109,52 +94,32 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 
 		// Now continue 1st level WPA
 		for(unsigned int it = 0; it < 4; it++) {
-			ROS_INFO("Entered second loop");
 			unsigned int i = index + offset[it];
-			ROS_INFO("1");
-			plan[i];
-			ROS_INFO("1.1");
-			map->isFree(i);
-			ROS_INFO("1.2");
+
 			if(plan[i] == -1 && map->isFree(i)) {
-				ROS_INFO("2");
 				// Check if it is a frontier cell
 				if(map->isFrontier(i)) {
-					ROS_INFO("Finding cluster");
 					findCluster(map, plan, offset, frontiers, frontierCells, i, minTargetAreaSize);
-					ROS_INFO("Found cluster");
 				} else {
-					ROS_INFO("Inserting into queue");
 					queue.insert(Entry(distance+linear, i));
-					ROS_INFO("Inserted into queue");
 				}
-				ROS_INFO("3");
 				plan[i] = distance+linear;
-				ROS_INFO("4");
 			}
 		}
 	}
 
-	ROS_INFO("Finished finding frontiers");
-
 	ROS_DEBUG("[MinPos] Found %d frontier cells in %d frontiers.", frontierCells, (int)frontiers.size());
-	if(frontiers.size() == 0)
-	{
-		if(cellCount > 50)
-		{
+	if(frontiers.size() == 0) {
+		if(cellCount > 50) {
 			return 0;
-		}else
-		{
+		} else	{
 			ROS_WARN("[MinPos] No Frontiers found after checking %d cells!", cellCount);
 			return 0;
 		}
 	}
 
-	ROS_INFO("checked for 0 frontiers");
-
 	// Publish frontiers as marker for RVIZ
 	if(publisher)	{
-		ROS_INFO("Publishing info to rviz");
 		visualization_msgs::Marker marker;
 		marker.header.frame_id = "/map";
 		marker.header.stamp = ros::Time();
@@ -177,21 +142,16 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 		marker.color.b = 1.0;
 		marker.points.resize(frontierCells);
 		marker.colors.resize(frontierCells);
-		ROS_INFO("created marker");
 
 		unsigned int p = 0;
 		srand(1337);
-		for(unsigned int i = 0; i < frontiers.size(); i++)
-		{
+		for(unsigned int i = 0; i < frontiers.size(); i++) {
 			char r = rand() % 256;
 			char g = rand() % 256;
 			char b = rand() % 256;
-			for(unsigned int j = 0; j < frontiers[i].size(); j++)
-			{
-				if(p < frontierCells)
-				{
-					if(!map->getCoordinates(x, y, frontiers[i][j]))
-					{
+			for(unsigned int j = 0; j < frontiers[i].size(); j++)	{
+				if(p < frontierCells)	{
+					if(!map->getCoordinates(x, y, frontiers[i][j]))	{
 						ROS_ERROR("[MinPos] getCoordinates failed!");
 						break;
 					}
@@ -203,8 +163,7 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 					marker.colors[p].g = g;
 					marker.colors[p].b = b;
 					marker.colors[p].a = 0.5;
-				}else
-				{
+				} else {
 					ROS_ERROR("[MinPos] SecurityCheck failed! (Asked for %d / %d)", p, frontierCells);
 				}
 				p++;
@@ -212,7 +171,6 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 		}
 		publisher->publish(marker);
 	}
-
 
 	return 0;
 }
