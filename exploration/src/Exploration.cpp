@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
       try {
         tfListener.lookupTransform("/map", "/base_link", ros::Time(0), map2base_link);
         double res = gridMap->getResolution();
-        unsigned int x = (map2base_link.getOrigin().x() - gridMap.getOriginX())
+        unsigned int x = (map2base_link.getOrigin().x() - gridMap->getOriginX())
                          / res + 0.5;
-        unsigned int y = (map2base_link.getOrigin().y() - gridMap.getOriginY())
+        unsigned int y = (map2base_link.getOrigin().y() - gridMap->getOriginY())
                          / res + 0.5;
         unsigned int start;
         if(gridMap->getIndex(x, y, start)) {
