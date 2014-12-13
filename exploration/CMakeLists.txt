@@ -39,5 +39,5 @@ include_directories(
   ${nav_msgs_INCLUDE_DIRS}
   ${tf_INCLUDE_DIRS}
 )
-add_executable(exploration src/Exploration.cpp src/FrontierFinder.cpp)
+add_executable(exploration src/Exploration.cpp src/Frontier.cpp)
 target_link_libraries(exploration ${catkin_LIBRARIES})

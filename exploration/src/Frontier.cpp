@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "FrontierFinder.h"
+#include "Frontier.h"
 #include <visualization_msgs/Marker.h>
 
 typedef std::multimap<double,unsigned int> Queue;
@@ -52,7 +52,7 @@ void findCluster(GridMap* map, double* plan, unsigned int* offset,
 }
 
 int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &frontiers,
-									ros::Publisher* publisher = NULL, double minTargetAreaSize = 10.0) {
+									ros::Publisher* publisher, double minTargetAreaSize) {
 	// Create some workspace for the wavefront algorithm
 	unsigned int mapSize = map->getSize();
 	double* plan = new double[mapSize];
