@@ -2,6 +2,8 @@
   <include file="$(find slam_robot)/launch/include/robot_drivers.launch" />
   <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
     <rosparam file="$(find slam_robot)/params/gmapping_params.yaml" command="load" />
+    <param name="maxUrange" value="5.5" />
+    <param name="maxRange" value="6" />
   </node>
   <include file="$(find slam_robot)/launch/include/nav_base.launch" />
 </launch>

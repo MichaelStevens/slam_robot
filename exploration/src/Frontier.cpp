@@ -54,6 +54,7 @@ void findCluster(GridMap* map, double* plan, unsigned int* offset,
 int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &frontiers,
 									ros::Publisher* publisher, double minTargetAreaSize) {
 	// Create some workspace for the wavefront algorithm
+
 	unsigned int mapSize = map->getSize();
 	double* plan = new double[mapSize];
 	for(unsigned int i = 0; i < mapSize; i++)	plan[i] = -1;
@@ -95,31 +96,35 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 		// Now continue 1st level WPA
 		for(unsigned int it = 0; it < 4; it++) {
 			unsigned int i = index + offset[it];
-
+		//	ROS_INFO("Value =  %i", map->getData(i));
 			if(plan[i] == -1 && map->isFree(i)) {
 				// Check if it is a frontier cell
 				if(map->isFrontier(i)) {
+					//ROS_INFO("Fount Frontier cell");
 					findCluster(map, plan, offset, frontiers, frontierCells, i, minTargetAreaSize);
 				} else {
+					//ROS_INFO("Found cell to contrinue search");
 					queue.insert(Entry(distance+linear, i));
 				}
 				plan[i] = distance+linear;
 			}
 		}
 	}
-
+	delete[] plan;
 	ROS_DEBUG("[MinPos] Found %d frontier cells in %d frontiers.", frontierCells, (int)frontiers.size());
 	if(frontiers.size() == 0) {
 		if(cellCount > 50) {
-			return 0;
+			//return 0;
 		} else	{
 			ROS_WARN("[MinPos] No Frontiers found after checking %d cells!", cellCount);
-			return 0;
+			//return 0;
 		}
 	}
 
 	// Publish frontiers as marker for RVIZ
-	if(publisher)	{
+
+	if(true)	{
+
 		visualization_msgs::Marker marker;
 		marker.header.frame_id = "/map";
 		marker.header.stamp = ros::Time();
@@ -162,7 +167,7 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 					marker.colors[p].r = r;
 					marker.colors[p].g = g;
 					marker.colors[p].b = b;
-					marker.colors[p].a = 0.5;
+					marker.colors[p].a = 1;
 				} else {
 					ROS_ERROR("[MinPos] SecurityCheck failed! (Asked for %d / %d)", p, frontierCells);
 				}
@@ -170,6 +175,7 @@ int findFrontiers(GridMap* map, unsigned int start, std::vector<Frontier> &front
 			}
 		}
 		publisher->publish(marker);
+		ROS_INFO("Published Frontiers");
 	}
 
 	return 0;
