@@ -12,7 +12,19 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   visualization_msgs
   nav2d_navigator
+  message_generation
 )
+
+add_message_files(
+  FILES
+  PointList.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+)
+
 
 ###################################
 ## catkin specific configuration ##
@@ -27,7 +39,9 @@ catkin_package(
 	nav_msgs
 	visualization_msgs
 	nav2d_navigator
+  message_runtime
 )
+
 
 ###########
 ## Build ##
