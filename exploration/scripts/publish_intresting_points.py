@@ -6,7 +6,7 @@ import rospy
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image, PointCloud2
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import PointStamped
 from exploration.msg import PointList
 from visualization_msgs.msg import Marker
 from cv_bridge import CvBridge, CvBridgeError
@@ -60,10 +60,14 @@ class IntPntFinder:
                 self.y_smooth.update(y)
                 self.z_smooth.update(z)
 
-            point = Point()
-            point.x = self.x_smooth.value()
-            point.y = self.y_smooth.value()
-            point.z = self.z_smooth.value()
+            point = PointStamped()
+            point.header.frame_id = "/camera_depth_optical_frame"
+            point.header.stamp = rospy.Time(0)
+            print point.header
+            point.header.stamp.secs -= 0
+            point.point.x = self.x_smooth.value()
+            point.point.y = self.y_smooth.value()
+            point.point.z = self.z_smooth.value()
             pointList = PointList()
             pointList.points = [point]
             self.point_pub.publish(pointList)
