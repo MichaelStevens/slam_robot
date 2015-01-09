@@ -1,2 +1,6 @@
 maxUrange: 5.5
 maxRange: 6
+srr: 0.01
+srt: 0.02
+str: 0.01
+stt: 0.02

@@ -62,6 +62,8 @@ class IntPntFinder:
 
             point = PointStamped()
             point.header.frame_id = "/camera_depth_optical_frame"
+            # TODO this stamp uses Time(0) to avoid the tf time difference problem
+            #      is there a better way of doing this?
             point.header.stamp = rospy.Time(0)
             print point.header
             point.header.stamp.secs -= 0
@@ -86,7 +88,7 @@ class IntPntFinder:
             marker.scale.x = 0.1
             marker.scale.y = 0.1
             marker.scale.z = 0.1
-            marker.points = pointList.points
+            marker.points = [p.point for p in pointList.points]
             self.int_point_pub.publish(marker)
 
 
