@@ -3,12 +3,12 @@ raytrace_range: 3.0
 #footprint: [ [0.3302, -0.0508], [0.254, -0.0508], [0.254, -0.254], [-0.254, -0.254], [-0.254, 0.254], [0.254, 0.254], [0.254, 0.0508], [0.3302, 0.0508] ]
 footprint: [[0.1825, 0.0], [0.052500000000000005, 0.1905], [-0.0775, 0.1905], [-0.1175, 0.14550000000000002], [-0.2025, 0.14550000000000002], [-0.2725, 0.0], [-0.2025, -0.14550000000000002], [-0.1175, -0.14550000000000002], [-0.0775, -0.1905], [0.052500000000000005, -0.1905]]
 
-inflation_radius: 2
+inflation_radius: 1
 
 observation_sources: laser_scan_sensor
 
 laser_scan_sensor: {
-  sensor_frame: laser,
+  sensor_frame: base_scan_link,
   data_type: LaserScan,
   topic: scan,
   marking: true,
