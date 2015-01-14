@@ -1,6 +1,6 @@
 import cv2
 
-def interest_map(image):
+def attention_map(image):
     image = cv2.GaussianBlur(image, (9, 9), 3)
     image = cv2.Canny(image,80,70)
     image = cv2.blur(image, (10, 10)) * 12

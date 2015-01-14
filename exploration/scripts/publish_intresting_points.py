@@ -10,7 +10,7 @@ from geometry_msgs.msg import PointStamped
 from exploration.msg import PointList
 from visualization_msgs.msg import Marker
 from cv_bridge import CvBridge, CvBridgeError
-from interest import interest_map
+from attention import attention_map
 
 class MovingAverage:
     def __init__(self, n):
@@ -29,8 +29,8 @@ class MovingAverage:
 
 class IntPntFinder:
     def __init__(self):
-        self.point_pub = rospy.Publisher("interesting_points", PointList, queue_size=10)
-        self.int_point_pub = rospy.Publisher("interesting_point_markers", Marker, queue_size=10)
+        self.point_pub = rospy.Publisher("attention_points", PointList, queue_size=10)
+        self.int_point_pub = rospy.Publisher("attention_point_markers", Marker, queue_size=10)
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("/camera/rgb/image_rect_mono", Image, self.camera_callback)
         self.depth_sub = rospy.Subscriber("/camera/depth/image_rect_raw", Image, self.depth_callback)
@@ -51,8 +51,8 @@ class IntPntFinder:
             print e
 
         if self.depth_image != None:
-            interest_image = interest_map(self.camera_image)
-            p = np.argmax(interest_image)
+            attention_image = attention_map(self.camera_image)
+            p = np.argmax(attention_image)
             (x, y, z) = self.index2point(p)
 
             if not (x == 0 and y == 0 and z == 0) and y > 0:

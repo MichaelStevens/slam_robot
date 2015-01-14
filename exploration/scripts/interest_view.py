@@ -8,7 +8,7 @@ import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
-from interest import interest_map
+from attention import attention_map
 
 
 class image_converter:
@@ -25,7 +25,7 @@ class image_converter:
     except CvBridgeError, e:
       print e
 
-    img = interest_map(img_orig)
+    img = attention_map(img_orig)
     p = np.argmax(img)
 
     cv2.circle(img_orig, (p % img.shape[1], int(p / img.shape[1]),),50, 200, 5)

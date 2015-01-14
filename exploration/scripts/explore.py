@@ -93,9 +93,9 @@ def main(args):
     # create function to move Kinect
     head = RobotHead(listener)
 
-    # subscribe to interesting points
+    # subscribe to attention points
     callback = make_int_pt_callback(listener)
-    int_pt_sub = rospy.Subscriber("/interesting_points", PointList, callback)
+    int_pt_sub = rospy.Subscriber("/attention_points", PointList, callback)
     ac_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     ac_client.wait_for_server()
 
@@ -103,7 +103,7 @@ def main(args):
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         if int_pt != None and int_pt_sub != None:
-            # stop subscribing to interesting points
+            # stop subscribing to attention points
             int_pt_sub.unregister()
             int_pt_sub = None
             head.look_at(int_pt)
