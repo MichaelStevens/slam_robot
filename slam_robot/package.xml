@@ -2,7 +2,10 @@
 <package>
   <name>slam_robot</name>
   <version>0.0.0</version>
-  <description>The slam_robot package</description>
+  <description>
+    This package contains launch files and parameters for the SLAM system
+    on the Adept Pioneer 3DX Robot.  
+  </description>
 
   <maintainer email="mls0.5mv2@gmail.com">michael</maintainer>
 

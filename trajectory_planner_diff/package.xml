@@ -11,7 +11,9 @@
         that can be set in a launch file. The parameters for this planner are also
         dynamically reconfigurable. This package's ROS wrapper adheres to the
         BaseLocalPlanner interface specified in the <a href="http://wiki.ros.org/nav_core">nav_core</a> package.
-
+        This package has been modified to force the robot to turn towards its path
+        before following it.
+        
     </description>
     <author>Eitan Marder-Eppstein</author>
     <author>contradict@gmail.com</author>

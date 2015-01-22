@@ -3,8 +3,7 @@
   <name>exploration</name>
   <version>0.0.0</version>
   <description>
-    This package holds a collection of plugins for the RobotNavigator, that provide
-    different cooperative exploration strategies for a team of mobile robots.
+    This package holds a collection of nodes geared toward vision based exploration
   </description>
 
   <maintainer email="sebastian.kasperski@dfki.de">Sebastian Kasperski</maintainer>

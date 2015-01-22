@@ -3,6 +3,8 @@
   <version>1.11.13</version>
   <description>
      A path planner library and node.
+     This package has been modified to allow for a variable goal tolerance
+     when path planning.
   </description>
   <maintainer email="davidvlu@gmail.com">David V. Lu!!</maintainer>
   <maintainer email="fergs@unboundedrobotics.com">Michael Ferguson</maintainer>
