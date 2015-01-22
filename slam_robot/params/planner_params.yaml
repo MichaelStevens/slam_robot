@@ -1,4 +1,5 @@
 base_local_planner: trajectory_planner_diff/TrajectoryPlannerDiffROS
+base_global_planner: global_plannerx/GlobalPlanner
 controller_frequency: 15
 
 TrajectoryPlannerDiffROS:

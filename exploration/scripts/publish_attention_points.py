@@ -11,11 +11,15 @@ from exploration.msg import PointList
 from visualization_msgs.msg import Marker
 from cv_bridge import CvBridge, CvBridgeError
 from attention import attention_map
+from std_srvs.srv import Empty
 
 class MovingAverage:
     def __init__(self, n):
         self.n = n
-        self.values = [0]
+        self.values = []
+
+    def clear(self):
+        self.values = []
 
     def update(self, x):
         if len(self.values) < self.n:
@@ -24,6 +28,7 @@ class MovingAverage:
             self.values = self.values[1:] + [x]
 
     def value(self):
+        if len(self.values) == 0: return None
         return sum(self.values) / len(self.values)
 
 
@@ -40,9 +45,16 @@ class IntPntFinder:
         self.fy = 542.739980
         self.cx = 314.649173
         self.cy = 240.160459
-        self.x_smooth = MovingAverage(20)
-        self.y_smooth = MovingAverage(20)
-        self.z_smooth = MovingAverage(20)
+        self.x_smooth = MovingAverage(13)
+        self.y_smooth = MovingAverage(13)
+        self.z_smooth = MovingAverage(13)
+        rospy.Service('clear_attention_smoother', Empty, self.clear_smoothers)
+
+    def clear_smoothers(self, data):
+        self.x_smooth.clear()
+        self.y_smooth.clear()
+        self.z_smooth.clear()
+        return []
 
     def camera_callback(self, data):
         try:
@@ -71,7 +83,9 @@ class IntPntFinder:
             point.point.y = self.y_smooth.value()
             point.point.z = self.z_smooth.value()
             pointList = PointList()
-            pointList.points = [point]
+            if point.point.x != None:
+                pointList.points = [point]
+
             self.point_pub.publish(pointList)
 
             # publish markers for visualization
@@ -109,13 +123,13 @@ class IntPntFinder:
         return (X / 1000., Y / 1000., Z / 1000.)
 
 def main(args):
-  intPntFinder = IntPntFinder()
-  rospy.init_node('int_point_pub', anonymous=True)
+    rospy.init_node('int_point_pub', anonymous=True)
+    intPntFinder = IntPntFinder()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print "Shutting down"
 
-  try:
-    rospy.spin()
-  except KeyboardInterrupt:
-    print "Shutting down"
 
 
 if __name__ == '__main__':

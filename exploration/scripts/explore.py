@@ -6,11 +6,79 @@ import rospy
 import tf
 import actionlib
 import math
-from math import sqrt, acos
+from math import sqrt, acos, pi
 from exploration.msg import PointList
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from actionlib_msgs.msg import GoalStatus
 from sensor_msgs.msg import JointState
+from std_srvs.srv import Empty
+
+class AttentionPointFinder:
+    def __init__(self, tf_listener, robot_head):
+        self.tf_listener = tf_listener
+        self.old_points = []
+        self.robot_head = robot_head
+        self.attention_point_sub = rospy.Subscriber("/attention_points", PointList, self.attention_point_callback)
+        self.attention_point = None
+        self.dist_thresh = 0.5
+        rospy.wait_for_service('clear_attention_smoother')
+        self.clear_attention_smoother = rospy.ServiceProxy('clear_attention_smoother', Empty)
+
+
+
+
+    def attention_point_callback(self, data):
+        if len(data.points) > 0:
+            self.attention_point = self.tf_listener.transformPoint("map", data.points[0])
+        else:
+            self.attention_point = None
+
+    def distance(self, p1, p2):
+        sum = (p1.point.x - p2.point.x)**2
+        sum += (p1.point.y - p2.point.y)**2
+        sum += (p1.point.z - p2.point.z)**2
+        return sqrt(sum)
+
+    def find_attention_points(self):
+        # create array to store all attention points found
+        points = []
+
+        # Check forward
+        self.robot_head.reset()
+        rospy.sleep(5)
+        self.clear_attention_smoother()
+        rospy.sleep(3)
+        if self.attention_point != None:
+            points.append(self.attention_point)
+        print "Found point 1"
+
+        # check left
+        self.robot_head.rotate(pi / 2, 0)
+        rospy.sleep(5)
+        self.clear_attention_smoother()
+        rospy.sleep(3)
+        if self.attention_point != None:
+            points.append(self.attention_point)
+        print "Found point 2"
+
+        # check right
+        self.robot_head.rotate(-pi / 2, 0)
+        rospy.sleep(8)
+        self.clear_attention_smoother()
+        rospy.sleep(3)
+        if self.attention_point != None:
+            points.append(self.attention_point)
+        print "Found point 3"
+        self.robot_head.reset()
+
+        # [float("inf")] is appended to the begining of the list so an empty list will not cause an error
+        point_filter = lambda p: min([float("inf")] + [self.distance(p, old) for old in self.old_points]) > self.dist_thresh
+
+        points = [p for p in points if point_filter(p)]
+        print "filtered down to %s points" % (len(points))
+        self.old_points.extend(points)
+        return points
+
 
 class RobotHead:
     def __init__(self, tf_listener):
@@ -27,14 +95,20 @@ class RobotHead:
         self.ptu_tilt = data.position[1]
 
     def reset(self):
+        self.rotate(0, 0)
+
+
+    def rotate(self, pan, tilt):
+        # publish angle values to the ptu
         msg = JointState()
         msg.header.frame_id = "map"
         msg.header.stamp = rospy.Time.now()
         msg.name = ["ptu_pan", "ptu_tilt"]
         msg.velocity = [0.6, 0.6]
-        msg.position = [0, 0]
+        msg.position = [pan, tilt]
         print "setting position : ", msg.position
         self.ptu_publisher.publish(msg)
+
 
     def look_at(self, point):
         # transform point into kinect frame
@@ -55,23 +129,7 @@ class RobotHead:
         print "pan: %s, tilt: %s" % (pan, tilt)
 
         # publish angle values to the ptu
-        msg = JointState()
-        msg.header.frame_id = "map"
-        msg.header.stamp = rospy.Time.now()
-        msg.name = ["ptu_pan", "ptu_tilt"]
-        msg.velocity = [0.6, 0.6]
-        msg.position = [self.ptu_pan-pan, self.ptu_tilt-tilt]
-        print "setting position : ", msg.position
-        self.ptu_publisher.publish(msg)
-
-
-int_pt = None
-def make_int_pt_callback(listener):
-    def int_pt_callback(data):
-        global int_pt
-        int_pt = listener.transformPoint("map", data.points[0])
-
-    return int_pt_callback
+        self.rotate(self.ptu_pan-pan, self.ptu_tilt-tilt)
 
 
 def robot_distance2(point, listener):
@@ -80,6 +138,22 @@ def robot_distance2(point, listener):
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         return None
     return math.sqrt((point.point.x - trans[0])**2 + (point.point.y - trans[1])**2)
+
+def drive_to_point(point, ac_client, listener, thresh):
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.header.stamp = rospy.Time.now()
+    goal.target_pose.pose.position.x = point.point.x
+    goal.target_pose.pose.position.y = point.point.y
+    goal.target_pose.pose.orientation.w = 1.0
+    ac_client.send_goal(goal)
+    distance = thresh + 1
+    while distance > thresh:
+        distance = robot_distance2(point, listener)
+
+
+    print 'cancel goal'
+    ac_client.cancel_goal()
 
 
 
@@ -92,48 +166,27 @@ def main(args):
 
     # create function to move Kinect
     head = RobotHead(listener)
+    attention_finder = AttentionPointFinder(listener, head)
 
-    # subscribe to attention points
-    callback = make_int_pt_callback(listener)
-    int_pt_sub = rospy.Subscriber("/attention_points", PointList, callback)
+    # this ac_client allows us to send commands to the nav stack
     ac_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     ac_client.wait_for_server()
 
+    print 'finding points...'
+
+    points = attention_finder.find_attention_points()
+
+    while len(points) > 0:
+        for point in points:
+            print 'driving to point'
+            drive_to_point(points[0], ac_client, listener, 1)
+            head.look_at(points[0])
+            rospy.sleep(1)
+            head.reset()
+        points = attention_finder.find_attention_points()
 
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        if int_pt != None and int_pt_sub != None:
-            # stop subscribing to attention points
-            int_pt_sub.unregister()
-            int_pt_sub = None
-            head.look_at(int_pt)
-
-
-            # send goal
-            #goal = MoveBaseGoal()
-            #goal.target_pose.header.frame_id = "map"
-            #goal.target_pose.header.stamp = rospy.Time.now()
-            #goal.target_pose.pose.position.x = int_pt.point.x
-            #goal.target_pose.pose.position.y = int_pt.point.y
-            #goal.target_pose.pose.orientation.w = 1.0
-
-
-            #ac_client.send_goal(goal)
-
-        #if int_pt == None: continue
-
-        #distance = robot_distance2(int_pt, listener)
-        #if distance != None:
-        #    print "%s away from target!" % (distance)
-        #    if distance <= 1.3:
-        #        if ac_client != None:
-        #            ac_client.cancel_goal()
-        #            ac_client = None
-        #        print "finished!"
-
-
-
-
         rate.sleep()
 
 

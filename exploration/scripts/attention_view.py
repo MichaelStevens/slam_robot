@@ -27,10 +27,8 @@ class image_converter:
 
     img = attention_map(img_orig)
     p = np.argmax(img)
-
+    
     cv2.circle(img_orig, (p % img.shape[1], int(p / img.shape[1]),),50, 200, 5)
-
-
     cv2.imshow("Image window", img_orig)
     cv2.waitKey(3)
 
