@@ -75,17 +75,20 @@ bool GradientPath::getPath(float* potential, double start_x, double start_y, dou
     int ns = xs_ * ys_;
     memset(gradx_, 0, ns * sizeof(float));
     memset(grady_, 0, ns * sizeof(float));
+    current.first = goal_x;
+    current.second = goal_y;
+    path.push_back(current);
 
     int c = 0;
     while (c++<ns*4) {
         // check if near goal
         double nx = stc % xs_ + dx, ny = stc / xs_ + dy;
 
-        if (fabs(nx - start_x) < 20 && fabs(ny - start_y) < 20) {
-            current.first = start_x;
-            current.second = start_y;
-            path.push_back(current);
-            return true;
+        if (fabs(nx - start_x) < .5 && fabs(ny - start_y) < .5) {
+          current.first = start_x;
+          current.second = start_y;
+          path.push_back(current);
+          return true;
         }
 
         if (stc < xs_ || stc > xs_ * ys_ - xs_) // would be out of bounds

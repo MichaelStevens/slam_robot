@@ -1,6 +1,11 @@
 base_local_planner: trajectory_planner_diff/TrajectoryPlannerDiffROS
-base_global_planner: global_plannerx/GlobalPlanner
+base_global_planner: navfn/NavfnROS
 controller_frequency: 15
+track_unknown_space: true
+
+GlobalPlanner:
+  allow_unknown: false
+  default_tolerance: 40.0
 
 TrajectoryPlannerDiffROS:
     acc_lim_theta: 3.2

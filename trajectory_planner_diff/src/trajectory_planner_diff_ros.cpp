@@ -423,11 +423,19 @@ namespace trajectory_planner_diff {
     //before we trundle off, make sure we are faceing the path
     if (!rotated_to_path_) {
 
+
       //we need to call the next two lines to make sure that the trajectory
       //planner updates its path distance and goal distance grids
       tc_->updatePlan(transformed_plan);
       Trajectory path = tc_->findBestPath(global_pose, robot_vel, drive_cmds);
       map_viz_.publishCostCloud(costmap_);
+
+      // so we do not rotate in place forever if we get a path off
+      // "stay in place"
+      if((int)transformed_plan.size() - 1 <= 2) {
+        rotated_to_path_ = true;
+        return true;
+      }
 
       double x1,x2, y1, y2;
       int i = std::min(10, (int)transformed_plan.size() - 1);

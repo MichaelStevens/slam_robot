@@ -6,12 +6,13 @@ import rospy
 import tf
 import actionlib
 import math
-from math import sqrt, acos, pi
+from math import sqrt, acos, pi, atan2, cos, tan
 from exploration.msg import PointList
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from actionlib_msgs.msg import GoalStatus
 from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
+
 
 class AttentionPointFinder:
     def __init__(self, tf_listener, robot_head):
@@ -23,9 +24,6 @@ class AttentionPointFinder:
         self.dist_thresh = 0.5
         rospy.wait_for_service('clear_attention_smoother')
         self.clear_attention_smoother = rospy.ServiceProxy('clear_attention_smoother', Empty)
-
-
-
 
     def attention_point_callback(self, data):
         if len(data.points) > 0:
@@ -131,15 +129,15 @@ class RobotHead:
         # publish angle values to the ptu
         self.rotate(self.ptu_pan-pan, self.ptu_tilt-tilt)
 
+def get_robot_pose(listener):
+    return listener.lookupTransform('/map', '/base_link', rospy.Time(0))
 
 def robot_distance2(point, listener):
-    try:
-        (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
-    except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-        return None
+    (trans,rot) = get_robot_pose()
+
     return math.sqrt((point.point.x - trans[0])**2 + (point.point.y - trans[1])**2)
 
-def drive_to_point(point, ac_client, listener, thresh):
+def drive_to_point(point, ac_client, listener):
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.Time.now()
@@ -147,16 +145,27 @@ def drive_to_point(point, ac_client, listener, thresh):
     goal.target_pose.pose.position.y = point.point.y
     goal.target_pose.pose.orientation.w = 1.0
     ac_client.send_goal(goal)
-    distance = thresh + 1
-    while distance > thresh:
-        distance = robot_distance2(point, listener)
 
-
-    print 'cancel goal'
-    ac_client.cancel_goal()
+    ac_client.wait_for_result()
 
 
 
+# generates a point for the robot to occupy such that it can
+# examine the attention point
+def get_goal_point(p_attention, p_robot, d):
+    theta = atan2((p_attention[1] - p_robot[1]), (p_attention[0] - p_robot[0]))
+    D = sqrt((p_attention[0] - p_robot[0])**2 + (p_attention[1] - p_robot[1])**2)
+    goal_x = p_robot[0] + (D-d)*cos(theta)
+    goal_y = p_robot[1] + tan(theta) * (goal_x - p_robot[0])
+
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.header.stamp = rospy.Time.now()
+    goal.target_pose.pose.position.x = goal_x
+    goal.target_pose.pose.position.y = goal_y
+    goal.target_pose.pose.orientation.w = 1
+
+    return goal
 
 def main(args):
     rospy.init_node('explore', anonymous=True)
@@ -176,15 +185,28 @@ def main(args):
 
     points = attention_finder.find_attention_points()
 
-    while len(points) > 0:
-        for point in points:
-            print 'driving to point'
-            drive_to_point(points[0], ac_client, listener, 1)
-            head.look_at(points[0])
-            rospy.sleep(1)
-            head.reset()
-        points = attention_finder.find_attention_points()
+    # the [0][:2] part retrieves only the (x, y) information
+    p_robot = get_robot_pose(listener)[0][:2]
 
+    goals = [get_goal_point((p.point.x, p.point.y), p_robot, 1.2) for p in points]
+
+    while len(points) > 0:
+        for (point, goal) in zip(points, goals):
+            print 'driving to goal'
+            ac_client.send_goal(goal)
+            ac_client.wait_for_result()
+
+            print 'looking at point'
+            head.look_at(point)
+            rospy.sleep(5)
+            head.reset()
+        points = []
+        #print 'finding points...'
+        #points = attention_finder.find_attention_points()
+        # the [0][:2] part retrieves only the (x, y) information
+        #p_robot = get_robot_pose()[0][:2]
+        #goals = [get_goal_point((p.point.x, p.point.y), p_robot, 1.5) for p in points]
+    print "Finished!!"
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         rate.sleep()

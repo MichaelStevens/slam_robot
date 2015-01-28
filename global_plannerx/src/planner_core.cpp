@@ -224,15 +224,15 @@ bool GlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geom
 
     //until tf can handle transforming things that are way in the past... we'll require the goal to be in our global frame
     if (tf::resolve(tf_prefix_, goal.header.frame_id) != tf::resolve(tf_prefix_, global_frame)) {
-        ROS_ERROR(
-                "The goal pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", tf::resolve(tf_prefix_, global_frame).c_str(), tf::resolve(tf_prefix_, goal.header.frame_id).c_str());
-        return false;
+      ROS_ERROR(
+      "The goal pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", tf::resolve(tf_prefix_, global_frame).c_str(), tf::resolve(tf_prefix_, goal.header.frame_id).c_str());
+      return false;
     }
 
     if (tf::resolve(tf_prefix_, start.header.frame_id) != tf::resolve(tf_prefix_, global_frame)) {
-        ROS_ERROR(
-                "The start pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", tf::resolve(tf_prefix_, global_frame).c_str(), tf::resolve(tf_prefix_, start.header.frame_id).c_str());
-        return false;
+      ROS_ERROR(
+      "The start pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", tf::resolve(tf_prefix_, global_frame).c_str(), tf::resolve(tf_prefix_, start.header.frame_id).c_str());
+      return false;
     }
 
     double wx = start.pose.position.x;
@@ -242,37 +242,31 @@ bool GlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geom
     double start_x, start_y, goal_x, goal_y;
 
     if (!costmap_->worldToMap(wx, wy, start_x_i, start_y_i)) {
-        ROS_WARN(
-                "The robot's start position is off the global costmap. Planning will always fail, are you sure the robot has been properly localized?");
-        return false;
+      ROS_WARN(
+      "The robot's start position is off the global costmap. Planning will always fail, are you sure the robot has been properly localized?");
+      return false;
     }
     if(old_navfn_behavior_){
-        start_x = start_x_i;
-        start_y = start_y_i;
+      start_x = start_x_i;
+      start_y = start_y_i;
     }else{
-        worldToMap(wx, wy, start_x, start_y);
+      worldToMap(wx, wy, start_x, start_y);
     }
 
     wx = goal.pose.position.x;
     wy = goal.pose.position.y;
 
     if (!costmap_->worldToMap(wx, wy, goal_x_i, goal_y_i)) {
-        ROS_WARN(
-                "The goal sent to the navfn planner is off the global costmap. Planning will always fail to this goal.");
-        return false;
+      ROS_WARN(
+      "The goal sent to the navfn planner is off the global costmap. Planning will always fail to this goal.");
+      return false;
     }
     if(old_navfn_behavior_){
-        goal_x = goal_x_i;
-        goal_y = goal_y_i;
+      goal_x = goal_x_i;
+      goal_y = goal_y_i;
     }else{
-        worldToMap(wx, wy, goal_x, goal_y);
+      worldToMap(wx, wy, goal_x, goal_y);
     }
-    // some trickery required to make navigating to within x meters of a goal possible
-    double goal_x_old = goal_x, goal_y_old = goal_y;
-    goal_x = start_x;
-    goal_y = start_y;
-    start_x = goal_x_old;
-    start_y = goal_y_old;
 
     //clear the starting cell within the costmap because we know it can't be an obstacle
     tf::Stamped<tf::Pose> start_pose;
@@ -290,36 +284,31 @@ bool GlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geom
     outlineMap(costmap_->getCharMap(), nx, ny, costmap_2d::LETHAL_OBSTACLE);
 
     bool found_legal = planner_->calculatePotentials(costmap_->getCharMap(), start_x, start_y, goal_x, goal_y,
-                                                    nx * ny * 2, potential_array_);
+    nx * ny * 2, potential_array_);
 
     if(!old_navfn_behavior_)
-        planner_->clearEndpoint(costmap_->getCharMap(), potential_array_, goal_x_i, goal_y_i, 2);
-    if(publish_potential_)
+      planner_->clearEndpoint(costmap_->getCharMap(), potential_array_, goal_x_i, goal_y_i, 2);
+      if(publish_potential_)
         publishPotential(potential_array_);
 
-    if (found_legal) {
-        //extract the plan
-        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, goal, plan)) {
-            std::reverse(plan.begin(), plan.end());
+        if (found_legal) {
+          //extract the plan
+          if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, goal, plan)) {
             //make sure the goal we push on has the same timestamp as the rest of the plan
             geometry_msgs::PoseStamped goal_copy = goal;
             goal_copy.header.stamp = ros::Time::now();
-            goal_copy.pose.position.x = plan.back().pose.position.x;
-            goal_copy.pose.position.y = plan.back().pose.position.y;
             plan.push_back(goal_copy);
-
-
-        } else {
+          } else {
             ROS_ERROR("Failed to get a plan from potential when a legal potential was found. This shouldn't happen.");
+          }
+        }else{
+          ROS_ERROR("Failed to get a plan.");
         }
-    }else{
-        ROS_ERROR("Failed to get a plan.");
-    }
 
-    //publish the plan for visualization purposes
-    publishPlan(plan);
-    delete potential_array_;
-    return !plan.empty();
+        //publish the plan for visualization purposes
+        publishPlan(plan);
+        delete potential_array_;
+        return !plan.empty();
 }
 
 void GlobalPlanner::publishPlan(const std::vector<geometry_msgs::PoseStamped>& path) {
