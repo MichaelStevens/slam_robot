@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "Frontier.h"
+#include "exploration/Frontier.h"
 #include "nav_msgs/GetMap.h"
 #include <nav2d_navigator/GridMap.h>
 #include <iostream>

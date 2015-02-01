@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "Frontier.h"
+#include "exploration/Frontier.h"
 #include <visualization_msgs/Marker.h>
 
 typedef std::multimap<double,unsigned int> Queue;

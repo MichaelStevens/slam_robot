@@ -20,10 +20,17 @@ add_message_files(
   PointList.msg
 )
 
+add_service_files(
+  FILES
+  GenerateGoal.srv
+)
+
 generate_messages(
   DEPENDENCIES
   geometry_msgs
 )
+
+
 
 
 ###################################
@@ -40,6 +47,7 @@ catkin_package(
 	visualization_msgs
 	nav2d_navigator
   message_runtime
+  message_generation
 )
 
 
@@ -48,10 +56,14 @@ catkin_package(
 ###########
 
 include_directories(
-  include/${PROJECT_NAME}/
+  include
   ${catkin_INCLUDE_DIRS}
   ${nav_msgs_INCLUDE_DIRS}
   ${tf_INCLUDE_DIRS}
 )
 add_executable(frontier_finder src/FrontierFinder.cpp src/Frontier.cpp)
 target_link_libraries(frontier_finder ${catkin_LIBRARIES})
+
+add_executable(goal_generator src/goal_generator_ros.cpp src/goal_generator.cpp)
+target_link_libraries(goal_generator ${catkin_LIBRARIES})
+add_dependencies(goal_generator exploration_gencpp)
