@@ -20,13 +20,15 @@ namespace exploration {
       delete tf_listener_;
     }
 
-  private:
+  //private:
     // stores the most recent costmap, converted from an occupancy grid
     costmap_2d::Costmap2D* costmap_;
     // for publishing a grid of scores, for visualization
     ros::Publisher score_pub_;
     tf::TransformListener* tf_listener_;
     GoalGenerator goalGenerator_;
+    ros::Subscriber costmap_sub_;
+    ros::ServiceServer service_;
 
     costmap_2d::Costmap2D* occupancyGrid2CostMap(const nav_msgs::OccupancyGrid::ConstPtr &grid);
 

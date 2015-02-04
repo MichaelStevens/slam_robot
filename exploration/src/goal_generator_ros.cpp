@@ -6,23 +6,28 @@ using namespace exploration;
 
 namespace exploration {
 
-  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(3) {
+  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(0.9), costmap_(NULL) {
     // initialize subscriptions, adverisements, and services
     ros::NodeHandle n;
 
+    ROS_INFO("Got node handle");
+
     // to retrieve costmap data
-    n.subscribe("/move_base/global_costmap/costmap", 1,
+    costmap_sub_ = n.subscribe("/move_base/global_costmap/costmap", 1,
                 &GoalGeneratorROS::updateOccupancyGrid, this);
 
     // to provide ros interface with GoalGenerator
-    n.advertiseService("generate_goal",
+    service_ = n.advertiseService("generate_goal",
                        &GoalGeneratorROS::handleGenerateGoal, this);
 
     // to visualize the goal generation algorithm
     score_pub_ = n.advertise<nav_msgs::OccupancyGrid>("goal_score_map", 1000);
 
+    ROS_INFO("start");
+
     // tf
     tf_listener_ = new tf::TransformListener(ros::Duration(10));
+    ROS_INFO("finish");
   }
 
 
@@ -51,7 +56,7 @@ namespace exploration {
   void GoalGeneratorROS::updateOccupancyGrid(const nav_msgs::OccupancyGrid::ConstPtr &msg) {
     // TODO subscribe the occupancy grid updates instead so you don't have to create a new
     //      object every time
-    delete costmap_;
+    if(costmap_ != NULL) delete costmap_;
     costmap_ = occupancyGrid2CostMap(msg);
   }
 
@@ -62,23 +67,30 @@ namespace exploration {
                                                                grid->info.resolution, grid->info.origin.position.x,
                                                                grid->info.origin.position.y);
 
-    ROS_INFO("Constructed costmap of size (%i, %i)", grid->info.width, grid->info.height);
+    //ROS_INFO("Constructed costmap of size (%i, %i)", grid->info.width, grid->info.height);
 
     // copy all the values from the occupancy grid to the costmap
-    for(int x = 0; x < costmap_->getSizeInCellsX(); x++) {
-      for(int y = 0; y < costmap_->getSizeInCellsY(); y++) {
-        int i = costmap_->getIndex(x, y);
-        costmap_->setCost(x, y, grid->data[i]);
+    for(int x = 0; x < costmap->getSizeInCellsX(); x++) {
+      for(int y = 0; y < costmap->getSizeInCellsY(); y++) {
+        int i = costmap->getIndex(x, y);
+        costmap->setCost(x, y, grid->data[i]);        
       }
     }
-    ROS_INFO("Copied %i values", costmap_->getSizeInCellsX() * costmap_->getSizeInCellsY());
-    return costmap_;
+    //ROS_INFO("Copied %i values", costmap->getSizeInCellsX() * costmap->getSizeInCellsY());
+    return costmap;
   }
 }
 
+
+
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "exploration");
+  ros::init(argc, argv, "goal_generator");
+  //ros::NodeHandle n;
+  ROS_INFO("Started ROS node");
   exploration::GoalGeneratorROS goal_gen;
+  //ros::ServiceServer service = n.advertiseService("generate_goal", &exploration::GoalGeneratorROS::handleGenerateGoal,
+  //                   &goal_gen);
+
 
   ros::spin();
   return 0;

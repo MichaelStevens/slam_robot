@@ -11,8 +11,8 @@
 namespace exploration {
   class GoalGenerator {
   public:
-    GoalGenerator(const int radius);
-    
+    GoalGenerator(const double radius);
+
     geometry_msgs::Pose2D generateGoal(geometry_msgs::PointStamped &attention_point,
                                        double robot_x, double robot_y,
                                        costmap_2d::Costmap2D& grid);
@@ -21,7 +21,7 @@ namespace exploration {
       return &grid_;
     }
   private:
-    const int radius_;
+    const double radius_;
     costmap_2d::Costmap2D* occupancyGrid2CostMap(nav_msgs::OccupancyGrid::ConstPtr &grid);
     nav_msgs::OccupancyGrid grid_;
 
