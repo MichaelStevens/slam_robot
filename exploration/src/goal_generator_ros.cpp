@@ -6,7 +6,7 @@ using namespace exploration;
 
 namespace exploration {
 
-  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(0.9), costmap_(NULL) {
+  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(3), costmap_(NULL) {
     // initialize subscriptions, adverisements, and services
     ros::NodeHandle n;
 
@@ -73,7 +73,7 @@ namespace exploration {
     for(int x = 0; x < costmap->getSizeInCellsX(); x++) {
       for(int y = 0; y < costmap->getSizeInCellsY(); y++) {
         int i = costmap->getIndex(x, y);
-        costmap->setCost(x, y, grid->data[i]);        
+        costmap->setCost(x, y, grid->data[i]);
       }
     }
     //ROS_INFO("Copied %i values", costmap->getSizeInCellsX() * costmap->getSizeInCellsY());

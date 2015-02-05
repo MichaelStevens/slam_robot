@@ -12,6 +12,7 @@ from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from actionlib_msgs.msg import GoalStatus
 from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
+from exploration.srv import *
 
 
 class AttentionPointFinder:
@@ -152,17 +153,12 @@ def drive_to_point(point, ac_client, listener):
 
 # generates a point for the robot to occupy such that it can
 # examine the attention point
-def get_goal_point(p_attention, p_robot, d):
-    theta = atan2((p_attention[1] - p_robot[1]), (p_attention[0] - p_robot[0]))
-    D = sqrt((p_attention[0] - p_robot[0])**2 + (p_attention[1] - p_robot[1])**2)
-    goal_x = p_robot[0] + (D-d)*cos(theta)
-    goal_y = p_robot[1] + tan(theta) * (goal_x - p_robot[0])
-
+def pose2goal(pose):
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.Time.now()
-    goal.target_pose.pose.position.x = goal_x
-    goal.target_pose.pose.position.y = goal_y
+    goal.target_pose.pose.position.x = pose.x
+    goal.target_pose.pose.position.y = pose.y
     goal.target_pose.pose.orientation.w = 1
 
     return goal
@@ -177,6 +173,9 @@ def main(args):
     head = RobotHead(listener)
     attention_finder = AttentionPointFinder(listener, head)
 
+    # create goal generation function
+    get_goal = rospy.ServiceProxy('generate_goal', GenerateGoal)
+
     # this ac_client allows us to send commands to the nav stack
     ac_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     ac_client.wait_for_server()
@@ -188,7 +187,7 @@ def main(args):
     # the [0][:2] part retrieves only the (x, y) information
     p_robot = get_robot_pose(listener)[0][:2]
 
-    goals = [get_goal_point((p.point.x, p.point.y), p_robot, 1.2) for p in points]
+    goals = [pose2goal(get_goal(p).goal_pose) for p in points]
 
     while len(points) > 0:
         for (point, goal) in zip(points, goals):

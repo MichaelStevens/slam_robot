@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="exploration" type="publish_attention_points.py" name="publish_attention_points" />
+  <node pkg="exploration" type="goal_generator" name="goal_generation" />            
+</launch>

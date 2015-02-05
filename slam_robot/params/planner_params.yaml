@@ -4,7 +4,6 @@ controller_frequency: 15
 track_unknown_space: true
 
 GlobalPlanner:
-  allow_unknown: false
   default_tolerance: 40.0
 
 TrajectoryPlannerDiffROS:

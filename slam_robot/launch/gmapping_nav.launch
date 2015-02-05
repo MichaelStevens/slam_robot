@@ -1,7 +1,8 @@
 <launch>
   <include file="$(find slam_robot)/launch/include/robot_drivers.launch" />
   <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
-    <rosparam file="$(find slam_robot)/params/gmapping_params.yaml" command="load" />    
+    <rosparam file="$(find slam_robot)/params/gmapping_params.yaml" command="load" />
   </node>
   <include file="$(find slam_robot)/launch/include/nav_base.launch" />
+  <include file="$(find slam_robot)/launch/include/cv.launch" />
 </launch>
