@@ -6,7 +6,7 @@ using namespace exploration;
 
 namespace exploration {
 
-  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(3), costmap_(NULL) {
+  GoalGeneratorROS::GoalGeneratorROS() : goalGenerator_(2.2), costmap_(NULL) {
     // initialize subscriptions, adverisements, and services
     ros::NodeHandle n;
 
@@ -37,17 +37,10 @@ namespace exploration {
     // can't do anything if these are null!
     if(costmap_ == NULL || tf_listener_ == NULL || score_pub_ == NULL) return false;
 
-    // get robot position to pass to goal generator
-    tf::StampedTransform transform;
-    try {
-      tf_listener_->lookupTransform("/map", "/base_link", ros::Time(0), transform);
-    } catch(tf::TransformException ex) {
-      ROS_INFO("Could not find transform!");
-      return false;
-    }
+  
     // get the goal
-    res.goal_pose = goalGenerator_.generateGoal(req.attention_point, transform.getOrigin().x(),
-                                               transform.getOrigin().y(), *costmap_);
+    res.goal_pose = goalGenerator_.generateGoal(req.attention_point, req.robot_pose.x,
+                                               req.robot_pose.y, *costmap_);
     // visualize the algorithm
     score_pub_.publish(*goalGenerator_.getOccupancyGrid());
     return true;

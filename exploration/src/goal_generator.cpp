@@ -164,9 +164,9 @@ namespace exploration {
           line_score = 0;
         } else {
           const double dist = abs(a*x + b*y + c) / sqrt(a*a + b*b);
-          line_score = 100 * (1 - dist / radius_map);
+          line_score = 100 * pow((1 - dist / radius_map), 2);
         }
-        score = 0.50 * obstical_score + 0.10 * dist_score + 0.40 * line_score;
+        score = 0.50 * obstical_score + 0.05 * dist_score + 0.45 * line_score;
         //score = line_score;
         //score = dist_score;
       }
@@ -210,15 +210,24 @@ namespace exploration {
 
 
 
-
-
     // nice little ros structure to store result
     geometry_msgs::Pose2D pose;
-    pose.x = max_loc.x;
-    pose.y = max_loc.y;
     map.mapToWorld(max_loc.x, max_loc.y, pose.x, pose.y);
-    pose.theta = 0;
 
+    // find the angle
+    double v_x = a_point.point.x - pose.x,
+           v_y = a_point.point.y - pose.y;
+    ROS_INFO("1) v_x: %f, v_y: %f", v_x, v_y);
+
+    double mag = sqrt(v_x*v_x + v_y*v_y);
+    ROS_INFO("mag: %f", mag);
+    v_x /= mag;
+    v_y /= mag;
+    ROS_INFO("2) v_x: %f, v_y: %f", v_x, v_y);
+    double yaw = acos(v_x) * sign(v_y);
+    ROS_INFO(" acos(v_x): %f", acos(v_x));
+
+    pose.theta = yaw;
 
     return pose;
   }

@@ -6,6 +6,7 @@ import rospy
 import tf
 import actionlib
 import math
+from itertools import *
 from math import sqrt, acos, pi, atan2, cos, tan
 from exploration.msg import PointList
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
@@ -13,6 +14,7 @@ from actionlib_msgs.msg import GoalStatus
 from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
 from exploration.srv import *
+from geomerty_msgs.msg import Pose2D
 
 
 class AttentionPointFinder:
@@ -159,7 +161,8 @@ def pose2goal(pose):
     goal.target_pose.header.stamp = rospy.Time.now()
     goal.target_pose.pose.position.x = pose.x
     goal.target_pose.pose.position.y = pose.y
-    goal.target_pose.pose.orientation.w = 1
+    goal.target_pose.pose.orientation.w = tf.transformations.quaternion_from_euler(0, 0, pose.theta)[3]
+    print "%s -> %s" % (pose.theta, goal.target_pose.pose.orientation.w)
 
     return goal
 
@@ -186,12 +189,17 @@ def main(args):
 
     # the [0][:2] part retrieves only the (x, y) information
     p_robot = get_robot_pose(listener)[0][:2]
+    robot_pose = Pose2D()
+    robot_pose.x = p_robot[0]
+    robot_pose.y = p_robot[1]
+    robot_pose.theta = 0
 
-    goals = [pose2goal(get_goal(p).goal_pose) for p in points]
+    points = zip(points, repeat(robot_pose))
 
     while len(points) > 0:
-        for (point, goal) in zip(points, goals):
+        for (a_point, robot_pose) in points:
             print 'driving to goal'
+            goal = pose2goal(get_goal(a_point, robot_pose).goal_pose)
             ac_client.send_goal(goal)
             ac_client.wait_for_result()
 
