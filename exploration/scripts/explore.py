@@ -14,7 +14,7 @@ from actionlib_msgs.msg import GoalStatus
 from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
 from exploration.srv import *
-from geomerty_msgs.msg import Pose2D
+from geometry_msgs.msg import Pose2D
 
 
 class AttentionPointFinder:
@@ -24,7 +24,7 @@ class AttentionPointFinder:
         self.robot_head = robot_head
         self.attention_point_sub = rospy.Subscriber("/attention_points", PointList, self.attention_point_callback)
         self.attention_point = None
-        self.dist_thresh = 0.5
+        self.dist_thresh = 1.5
         rospy.wait_for_service('clear_attention_smoother')
         self.clear_attention_smoother = rospy.ServiceProxy('clear_attention_smoother', Empty)
 
@@ -130,7 +130,7 @@ class RobotHead:
         print "pan: %s, tilt: %s" % (pan, tilt)
 
         # publish angle values to the ptu
-        self.rotate(self.ptu_pan-pan, self.ptu_tilt-tilt)
+        self.rotate((self.ptu_pan-pan), self.ptu_tilt-tilt)
 
 def get_robot_pose(listener):
     return listener.lookupTransform('/map', '/base_link', rospy.Time(0))
@@ -202,17 +202,22 @@ def main(args):
             goal = pose2goal(get_goal(a_point, robot_pose).goal_pose)
             ac_client.send_goal(goal)
             ac_client.wait_for_result()
-
+            rospy.sleep(2)
             print 'looking at point'
-            head.look_at(point)
+            head.look_at(a_point)
             rospy.sleep(5)
             head.reset()
         points = []
-        #print 'finding points...'
-        #points = attention_finder.find_attention_points()
+        points = attention_finder.find_attention_points()
+
         # the [0][:2] part retrieves only the (x, y) information
-        #p_robot = get_robot_pose()[0][:2]
-        #goals = [get_goal_point((p.point.x, p.point.y), p_robot, 1.5) for p in points]
+        p_robot = get_robot_pose(listener)[0][:2]
+        robot_pose = Pose2D()
+        robot_pose.x = p_robot[0]
+        robot_pose.y = p_robot[1]
+        robot_pose.theta = 0
+
+        points = zip(points, repeat(robot_pose))
     print "Finished!!"
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():

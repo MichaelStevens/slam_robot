@@ -500,13 +500,19 @@ namespace trajectory_planner_diff {
           }
         }
         //if we're stopped... then we want to rotate to goal
+        // took out rotation to goal for testing puropses
+
         else{
+          reached_goal_ = true;
+          /*
           //set this so that we know its OK to be moving
           rotating_to_goal_ = true;
           if(!rotateToGoal(global_pose, robot_vel, goal_th, cmd_vel)) {
             return false;
           }
+          */
         }
+
       }
 
       //publish an empty plan because we've reached our goal position
