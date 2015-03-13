@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>slam_robot</name>
+  <name>mug_detector</name>
   <version>0.0.0</version>
-  <description>
-    This package contains launch files and parameters for the SLAM system
-    on the Adept Pioneer 3DX Robot.
-  </description>
+  <description>The mug_detector package</description>
 
-  <maintainer email="mls0.5mv2@gmail.com">michael</maintainer>
+  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="michael@todo.todo">michael</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/slam_robot</url> -->
+  <!-- <url type="website">http://wiki.ros.org/mug_detector</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -42,8 +42,16 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  
-  <run_depend>cv_bridge</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
 
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <!-- <metapackage/> -->
+
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
 </package>

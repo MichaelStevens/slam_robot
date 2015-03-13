@@ -5,4 +5,5 @@
   </node>
   <include file="$(find slam_robot)/launch/include/nav_base.launch" />
   <include file="$(find slam_robot)/launch/include/cv.launch" />
+  <node pkg="slam_robot" type="command_server.py" name="command_server" />
 </launch>

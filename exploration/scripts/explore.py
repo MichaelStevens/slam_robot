@@ -1,11 +1,13 @@
 #!/usr/bin/env python
+
+import rospy
+import mug_detector as detect
 import roslib
 roslib.load_manifest('exploration')
-import sys
-import rospy
 import tf
 import actionlib
 import math
+import roslib
 from itertools import *
 from math import sqrt, acos, pi, atan2, cos, tan
 from exploration.msg import PointList
@@ -15,7 +17,6 @@ from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
 from exploration.srv import *
 from geometry_msgs.msg import Pose2D
-
 
 class AttentionPointFinder:
     def __init__(self, tf_listener, robot_head):

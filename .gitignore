@@ -1,2 +1,4 @@
 maps/
 *.pyc
+mug_detector/external/*
+mug_detector/data/*

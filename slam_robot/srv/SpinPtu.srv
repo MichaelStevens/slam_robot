@@ -1,0 +1,6 @@
+float64 center_tilt
+float64 center_pan
+float64 amplitude_tilt
+float64 amplitude_pan
+float64 speed
+---
