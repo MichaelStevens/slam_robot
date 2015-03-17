@@ -10,7 +10,6 @@ import rospy
 reqest_time = 0
 ptu_request = SpinPtuRequest(0, 0, 0, 0, 0)
 
-
 ptu_data = JointState()
 ptu_data.header.frame_id = "map"
 ptu_data.name = ["ptu_pan", "ptu_tilt"]
@@ -29,7 +28,6 @@ ZERO_TWIST.angular.y = 0
 ZERO_TWIST.angular.z = 0
 
 def publish_ptu_data(data, request, ptu_pub):
-
     if ptu_data.velocity[0] < 0:
         ptu_data.velocity[0] = -ptu_data.velocity[0]
         ptu_data.position[0] = request.center_pan - request.amplitude_pan
@@ -44,9 +42,6 @@ def publish_ptu_data(data, request, ptu_pub):
 
     ptu_data.header.stamp = rospy.Time.now()
     ptu_pub.publish(ptu_data)
-
-
-
 
 def handle_move(data):
     print "got: [%s, %s]" % (data.twist.linear.x, data.time)

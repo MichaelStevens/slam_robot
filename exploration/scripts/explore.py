@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 import rospy
-import mug_detector as detect
 import roslib
 roslib.load_manifest('exploration')
 import tf
@@ -17,6 +15,7 @@ from sensor_msgs.msg import JointState
 from std_srvs.srv import Empty
 from exploration.srv import *
 from geometry_msgs.msg import Pose2D
+from mug_detector.srv import *
 
 class AttentionPointFinder:
     def __init__(self, tf_listener, robot_head):
@@ -28,6 +27,7 @@ class AttentionPointFinder:
         self.dist_thresh = 1.5
         rospy.wait_for_service('clear_attention_smoother')
         self.clear_attention_smoother = rospy.ServiceProxy('clear_attention_smoother', Empty)
+
 
     def attention_point_callback(self, data):
         if len(data.points) > 0:
@@ -98,7 +98,6 @@ class RobotHead:
 
     def reset(self):
         self.rotate(0, 0)
-
 
     def rotate(self, pan, tilt):
         # publish angle values to the ptu
@@ -184,6 +183,9 @@ def main(args):
     ac_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     ac_client.wait_for_server()
 
+    # create detector
+    get_mug_detections = rospy.ServiceProxy('get_mug_detections', Detections)
+
     print 'finding points...'
 
     points = attention_finder.find_attention_points()
@@ -196,6 +198,7 @@ def main(args):
     robot_pose.theta = 0
 
     points = zip(points, repeat(robot_pose))
+    detections = []
 
     while len(points) > 0:
         for (a_point, robot_pose) in points:
@@ -207,6 +210,7 @@ def main(args):
             print 'looking at point'
             head.look_at(a_point)
             rospy.sleep(5)
+            detections.extend(get_mug_detections())
             head.reset()
         points = []
         points = attention_finder.find_attention_points()

@@ -13,7 +13,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from attention import attention_map
 from std_srvs.srv import Empty
 
-class MovingAverage:
+class MovingAverage:''
     def __init__(self, n):
         self.n = n
         self.values = []
